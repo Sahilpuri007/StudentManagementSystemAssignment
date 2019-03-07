@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Student Management System</string>
+    <string name="student_details">Student Details</string>
+    <string name="add_here">Add Student</string>
+    <string name="name">Name :</string>
+    <string name="roll_no">Roll. No. :</string>
+    <string name="add_student_details">Add Student Details</string>
+    <string name="add_name">Name</string>
+    <string name="add_roll_no">Roll.No.</string>
+    <string name="add_student">Add Student</string>
+    <string name="no_students_added">No Students Added Till Yet!!!</string>
+    <string name="layout_switch">Layout Switch</string>
+</resources>
