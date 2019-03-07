@@ -6,7 +6,7 @@ a button "Add Student".
 On hitting save, this new student will appear in the list. 
 
 
-* There ared 3 options in a Dialog when click on a student item. These options are be View/Edit/Delete. 
+* There are 3 options in a Dialog when click on a student item. These options are be View/Edit/Delete. 
 
 
 * It has an option to view students as list as well as a grid. This toggle option is provided on the main screen only. 
