@@ -23,11 +23,13 @@ import com.system.studentmanagement.model.Student;
 public class StudentActivity extends AppCompatActivity {
 
 
+    public static final int ADD_STUDENT_INFO = 101;
+    public static final int VIEW_STUDENT_INFO = 102;
+    private static final int EDIT_STUDENT_INFO = 103 ;
     EditText editTextName, editTextRollNo;
      TextView textViewTitle;
      Button btnAddStudent;
-    public static final int VIEW_STUDENT_INFO = 102;
-    private static final int EDIT_STUDENT_INFO = 103 ;
+
 
 
     @Override
@@ -40,43 +42,32 @@ public class StudentActivity extends AppCompatActivity {
         btnAddStudent =  findViewById(R.id.btnAddStudent);
         textViewTitle = findViewById(R.id.title_screen);
 
-        if(btnAddStudent.getText().equals("Add Student")) {
-            btnAddStudent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!validate()) {
-                        Log.d("Validate", "Wrong");
-                    } else {
-                        addStudent();
-                    }
-                }
-            });
-        }
+
+
 
         Intent intent = getIntent();
         if(intent != null) {
             final Student student = intent.getParcelableExtra("studentObj");
+            String code = Integer.toString(intent.getIntExtra("Option",404));
+            if(intent.getIntExtra("Option",404)== ADD_STUDENT_INFO){
+
+                btnAddStudent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!validate()) {
+                            Log.d("Validate", "Wrong");
+                        } else {
+                            addStudent();
+                        }
+                    }
+                });
+            }
             if (intent.getIntExtra("Option",404) == VIEW_STUDENT_INFO) {
                 viewStudent(student);
             }
             if(intent.getIntExtra("Option",404) == EDIT_STUDENT_INFO){
-                final Student updatedStudent = updateStudent(student);
-                btnAddStudent.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d("click","update"+ updatedStudent.getStudentName());
-                        if (!validate()) {
-                            Log.d("Validate", "Wrong");
-                        } else {
-                            Intent returnIntent = new Intent();
-                            returnIntent.putExtra("studentObj",updatedStudent);
-                            setResult(EDIT_STUDENT_INFO,returnIntent);
-                            finish();
-                        }
-                        }
-
-                });
-
+                int position = intent.getIntExtra("position",-1);
+               updateStudent(student,position);
         }}
 
     }
@@ -84,7 +75,7 @@ public class StudentActivity extends AppCompatActivity {
 
     private void addStudent() {
         int counter=0;
-
+        Log.d("inside add","add student method");
         String studentName = editTextName.getText().toString().trim();
         String studentRollNo = editTextRollNo.getText().toString();
 
@@ -99,6 +90,7 @@ public class StudentActivity extends AppCompatActivity {
         if(counter==0){
 
         returnIntent.putExtra("studentObj",student);
+            Log.d("inside add",returnIntent.toString());
             setResult(RESULT_OK,returnIntent);
             finish();}
     }
@@ -115,29 +107,40 @@ public class StudentActivity extends AppCompatActivity {
         textViewTitle.setText("Student Details");
     }
 
-    private Student updateStudent(Student student) {
-        int counter = 0;
+    private void updateStudent(Student student, final int position) {
+
         textViewTitle.setText("Update Student Details");
         btnAddStudent.setText("Update");
         editTextRollNo.setText(student.getStudentRollNo());
         editTextName.setText(student.getStudentName());
 
-        /*String studentName = editTextName.getText().toString().trim();
-        String studentRollNo = editTextRollNo.getText().toString();
-        Student updatedstudent = new Student(studentName, studentRollNo);
-        for (Student ItrStudent : ShowStudentsActivity.studentArrayList) {
-            if (updatedstudent.getStudentRollNo().equals(ItrStudent.getStudentRollNo())) {
-                editTextRollNo.setError("Not Unique Roll No.");
-                counter++;
+        btnAddStudent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int counter = 0;
+                String studentName = editTextName.getText().toString().trim();
+                String studentRollNo = editTextRollNo.getText().toString();
+
+                Student student = new Student(studentName,studentRollNo);
+                for(Student ItrStudent:ShowStudentsActivity.studentArrayList){
+                    if(student.getStudentRollNo()==studentRollNo){
+                        break;
+                    }
+                    if (student.getStudentRollNo().equals(ItrStudent.getStudentRollNo())) {
+                        editTextRollNo.setError("Not Unique Roll No.");
+                        counter++;
+                    }
+                }
+                Intent returnIntent = new Intent();
+                if(counter==0){
+
+                    returnIntent.putExtra("studentObj",student);
+                    returnIntent.putExtra("position",position);
+                    setResult(EDIT_STUDENT_INFO,returnIntent);
+                    finish();}
             }
-
-*/
-
-
-                return new Student(editTextName.getText().toString(),editTextRollNo.getEditableText().toString());
-
-
-        }
+        });
+    }
 
 
 

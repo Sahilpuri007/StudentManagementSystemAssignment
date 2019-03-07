@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import
         android.content.Intent;
+import android.provider.Telephony;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -105,6 +106,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
                         //Toast.makeText(ShowStudentsActivity.this,"Clicked Edit",Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(ShowStudentsActivity.this,StudentActivity.class);
                         intent.putExtra("studentObj",studentArrayList.get(position));
+                        intent.putExtra("position",position);
                         intent.putExtra("Option",EDIT_STUDENT_INFO);
                         startActivityForResult(intent,EDIT_STUDENT_INFO);
                         dialog.dismiss();
@@ -228,6 +230,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
 
     private void addStudentActivity() {
         Intent intent = new Intent(ShowStudentsActivity.this, StudentActivity.class);
+        intent.putExtra("Option", ADD_STUDENT_INFO);
         startActivityForResult(intent,ADD_STUDENT_INFO);
     }
 
@@ -235,10 +238,11 @@ public class ShowStudentsActivity extends AppCompatActivity {
     protected  void onActivityResult(int requestCode,int resultCode,Intent intent){
 
         RelativeLayout emptyView = findViewById(R.id.emptyView);
-        if(resultCode == RESULT_OK){
+        if(resultCode == RESULT_OK && requestCode == ADD_STUDENT_INFO){
 
 
          Student student = intent.getParcelableExtra("studentObj");
+
          studentArrayList.add(student);
 
 
@@ -248,8 +252,9 @@ public class ShowStudentsActivity extends AppCompatActivity {
         }
         if (resultCode == EDIT_STUDENT_INFO){
             Student student = intent.getParcelableExtra("studentObj");
-            Log.d("New Student",student.getStudentName());
-            studentArrayList.add(student);
+            int position = intent.getIntExtra("position",-1);
+            studentArrayList.remove(position);
+            studentArrayList.add(position,student);
             studentListAdapter.notifyDataSetChanged();
 
         }
