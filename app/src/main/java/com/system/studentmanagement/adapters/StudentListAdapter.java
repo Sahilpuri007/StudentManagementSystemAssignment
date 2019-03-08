@@ -12,12 +12,22 @@ import com.system.studentmanagement.model.Student;
 
 import java.util.ArrayList;
 
+/*
+ * @author Sahil Puri
+ * StudentListAdapter
+ * A custom adapter for the recyclerView used
+ *
+ */
 public class StudentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-   private ArrayList<Student> studentArrayList;
+    private ArrayList<Student> studentArrayList;
     private OnItemClickListener mListener;
 
-    public StudentListAdapter(ArrayList<Student> studentArrayList) {
+    /*
+     * Constructor for StudentListAdapter
+     * @param ArrayList<Student> studentArrayList
+     */
+    public StudentListAdapter(final ArrayList<Student> studentArrayList) {
         this.studentArrayList = studentArrayList;
     }
 
@@ -25,7 +35,7 @@ public class StudentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-        View view = (View) layoutInflater.inflate(R.layout.student_item_layout,viewGroup,false);
+        View view = (View) layoutInflater.inflate(R.layout.item_student_layout, viewGroup, false);
         return new StudentViewHolder(view);
     }
 
@@ -36,27 +46,37 @@ public class StudentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         studentViewHolder.textViewRollNo.setText(studentArrayList.get(i).getStudentRollNo());
 
 
-
     }
 
     @Override
     public int getItemCount() {
         return studentArrayList.size();
     }
-
-    class StudentViewHolder extends RecyclerView.ViewHolder{
+    /*
+     * Method setOnItemClickListener
+     * @param OnItemClickListener listener
+     */
+    public void setOnItemClickListener(final OnItemClickListener listener) {
+        mListener = listener;
+    }
+    /*
+     * Inner Class StudentViewHolder
+     * To describes an item view within the RecyclerView.
+     */
+    class StudentViewHolder extends RecyclerView.ViewHolder {
         TextView textViewName, textViewRollNo;
+
         public StudentViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewName = (TextView) itemView.findViewById(R.id.textViewName);
-            textViewRollNo = (TextView) itemView.findViewById(R.id.textViewRollNo);
+            textViewName = itemView.findViewById(R.id.textViewName);
+            textViewRollNo = itemView.findViewById(R.id.textViewRollNo);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mListener != null){
+                    if (mListener != null) {
                         int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION){
+                        if (position != RecyclerView.NO_POSITION) {
                             mListener.OnItemClick(position);
                         }
                     }
@@ -64,12 +84,12 @@ public class StudentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             });
         }
     }
-
-    public interface OnItemClickListener{
-        void OnItemClick(int position);
+    /*
+     * Interface OnItemClickListener
+     * To add a onClick on RecyclerView Items
+     */
+    public interface OnItemClickListener {
+        void OnItemClick(final int position);
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener){
-        mListener=listener;
-    }
 }

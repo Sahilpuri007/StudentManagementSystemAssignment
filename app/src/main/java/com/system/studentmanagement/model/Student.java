@@ -3,17 +3,34 @@ package com.system.studentmanagement.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/*
+ * @author Sahil Puri
+ * Student class to hold details of the Student
+ * Student will have a Name and a Roll number
+ * Student class implements Parcelable interface
+ */
+
 public class Student implements Parcelable {
     private String studentName;
     private String studentRollNo;
 
-    public Student(String studentName, String studentRollNo) {
+
+    /*
+     * This is Constructor of Student Class
+     * @param String studentName
+     * @param String studentRollNo
+     */
+    public Student(final String studentName,final  String studentRollNo) {
         this.studentName = studentName;
         this.studentRollNo = studentRollNo;
-
     }
 
-    protected Student(Parcel in) {
+
+    /*
+     * This is Constructor of Student Class
+     * @param Parcel in
+     */
+    private Student(Parcel in) {
         studentName = in.readString();
         studentRollNo = in.readString();
 
@@ -31,24 +48,6 @@ public class Student implements Parcelable {
         }
     };
 
-    public String getStudentName() {
-        return studentName;
-    }
-
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
-
-    public String getStudentRollNo() {
-        return studentRollNo;
-    }
-
-    public void setStudentRollNo(String studentRollNo) {
-        this.studentRollNo = studentRollNo;
-    }
-
-
-
     @Override
     public int describeContents() {
         return 0;
@@ -60,4 +59,24 @@ public class Student implements Parcelable {
         dest.writeString(studentRollNo);
 
     }
+
+    /**
+     * This method used to get Name of Student
+     *
+     * @return String studentName
+     */
+    public String getStudentName() {
+        return studentName;
+    }
+
+    /**
+     * This method used to get RollNo of Student
+     *
+     * @return String studentRollNo
+     */
+    public String getStudentRollNo() {
+        return studentRollNo;
+    }
+
+
 }

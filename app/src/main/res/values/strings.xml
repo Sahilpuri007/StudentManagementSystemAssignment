@@ -10,4 +10,13 @@
     <string name="add_student">Add Student</string>
     <string name="no_students_added">No Students Added Till Yet!!!</string>
     <string name="layout_switch">Layout Switch</string>
+    <string name="update_title">Update Student Details</string>
+    <string name="update">Update</string>
+    <string name="options">OPTIONS</string>
+    <string name="view">View</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="menu_button">Menu Button</string>
+    <string name="delete_dialog_title">Delete Student Info!</string>
+    <string name="delete_dialog_message">Are you sure you want to delete this student</string>
 </resources>

@@ -3,119 +3,117 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#70BDBDB3"
+    android:orientation="vertical"
     tools:context=".activities.ShowStudentsActivity">
 
-   <android.support.v7.widget.Toolbar
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:id="@+id/toolbar">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/student_details"
-            android:textColor="#FFFF"
-            android:textStyle="bold"
-            android:id="@+id/textViewTitle"
-            android:layout_weight="1"/>
+        android:background="@color/colorPrimary">
 
-        <Switch
-            android:layout_marginStart="20dp"
-            android:text="@string/layout_switch"
-            android:textColor="#FFFF"
-            android:textStyle="bold"
-            android:id="@+id/layoutSwitch"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="0.33"
-            />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:src="@drawable/ic_delete_sweep_black_24dp"
-            android:background="@color/colorPrimary"
-            android:layout_weight="1"
-            android:id="@+id/btnDeleteAll"
-            />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:src="@drawable/ic_sort_black_24dp"
-            android:background="@color/colorPrimary"
-            android:layout_weight="1"
-            android:id="@+id/btnSort"
-            android:contentDescription="Menu Button"
-            />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/student_details"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <Switch
+                android:id="@+id/layoutSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="0.33"
+                android:text="@string/layout_switch"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnDeleteAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:src="@drawable/ic_delete_sweep_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/btnSort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary"
+                android:contentDescription="@string/menu_button"
+                android:src="@drawable/ic_sort_black_24dp" />
 
 
-
-    </LinearLayout>
+        </LinearLayout>
     </android.support.v7.widget.Toolbar>
 
 
     <RelativeLayout
+        android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/emptyView"
         android:layout_above="@id/addButton"
 
-       >
+        >
+
         <ImageView
+            android:id="@+id/no_added_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_add_student"
-            android:id="@+id/no_added_image"
             android:layout_centerInParent="true"
-            />
+            android:src="@drawable/ic_add_student" />
+
         <TextView
-            android:layout_margin="10dp"
             android:id="@+id/no_added"
-            android:layout_below="@id/no_added_image"
             android:layout_width="match_parent"
-            android:textSize="30sp"
-            android:textColor="@color/colorPrimary"
             android:layout_height="wrap_content"
+            android:layout_below="@id/no_added_image"
+            android:layout_margin="10dp"
             android:text="@string/no_students_added"
             android:textAlignment="center"
-            />
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="5dp"
         android:layout_above="@id/addButton"
         android:layout_below="@id/toolbar"
-        android:padding="4dp"
-        android:scrollbars="vertical"
+        android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"/>
+        android:padding="4dp"
+        android:scrollbars="vertical" />
 
     <Button
-            android:id="@+id/addButton"
-            android:layout_marginTop="10dp"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:background="@color/colorPrimary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/add_here"
-            android:layout_alignParentBottom="true"
-            />
-
+        android:id="@+id/addButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/add_here"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp" />
 
 
 </RelativeLayout>

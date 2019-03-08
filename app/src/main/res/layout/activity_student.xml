@@ -7,40 +7,41 @@
     tools:context=".activities.StudentActivity">
 
     <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:id="@+id/toolbar_add">
+        android:background="@color/colorPrimary">
+
         <TextView
+            android:id="@+id/title_screen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_student_details"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:id="@+id/title_screen"
-            android:textAlignment="center"/>
+            android:textStyle="bold" />
 
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-      >
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_margin="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
+
             <ImageView
+                android:id="@+id/no_added_image"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_add_student"
-                android:id="@+id/no_added_image"
                 android:layout_gravity="center"
-                />
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_add_student" />
 
             <EditText
                 android:id="@+id/editTextName"
@@ -50,33 +51,33 @@
                 android:hint="@string/add_name"
                 android:inputType="textCapWords|textPersonName"
                 android:maxLength="30"
-                />
+                android:textColor="@color/colorBlack" />
 
             <EditText
                 android:id="@+id/editTextRollNo"
-                android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:hint="@string/add_roll_no"
+                android:inputType="number"
                 android:maxLength="6"
-                />
+                android:textColor="@color/colorBlack" />
+
             <Button
                 android:id="@+id/btnAddStudent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:gravity="center"
-                android:layout_marginTop="20dp"
-                android:textSize="20sp"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/round_button"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/add_student" />
+                android:layout_marginTop="20dp"
+                android:background="@drawable/round_button"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/add_student"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp" />
         </LinearLayout>
 
     </ScrollView>
-
 
 
 </LinearLayout>
