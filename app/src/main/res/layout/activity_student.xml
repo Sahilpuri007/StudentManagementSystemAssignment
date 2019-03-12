@@ -19,7 +19,7 @@
             android:text="@string/add_student_details"
             android:textAlignment="center"
             android:textColor="@color/colorWhite"
-            android:textSize="20sp"
+            android:textSize="@dimen/text_size"
             android:textStyle="bold" />
 
     </android.support.v7.widget.Toolbar>
@@ -31,23 +31,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/margin"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="@dimen/padding">
 
             <ImageView
                 android:id="@+id/no_added_image"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="@dimen/add_image_size"
+                android:layout_height="@dimen/add_image_size"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/margin"
                 android:src="@drawable/ic_add_student" />
 
             <EditText
                 android:id="@+id/editTextName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="@dimen/margin"
                 android:hint="@string/add_name"
                 android:inputType="textCapWords|textPersonName"
                 android:maxLength="30"
@@ -57,7 +57,7 @@
                 android:id="@+id/editTextRollNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="@dimen/margin"
                 android:hint="@string/add_roll_no"
                 android:inputType="number"
                 android:maxLength="6"
@@ -68,13 +68,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/margin"
                 android:background="@drawable/round_button"
                 android:gravity="center"
-                android:padding="10dp"
+                android:padding="@dimen/padding"
                 android:text="@string/add_student"
                 android:textColor="@color/colorWhite"
-                android:textSize="20sp" />
+                android:textSize="@dimen/text_size" />
         </LinearLayout>
 
     </ScrollView>

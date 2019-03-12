@@ -10,41 +10,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="@dimen/margin"
         android:text="@string/options"
         android:textColor="@color/colorPrimary"
-        android:textSize="25sp"
-        android:textStyle="bold" />
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        />
 
     <Button
         android:id="@+id/btnView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/margin"
         android:background="@drawable/round_button"
         android:text="@string/view"
         android:textColor="@color/colorWhite"
-        android:textSize="20sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/btnEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/margin"
         android:background="@drawable/round_button"
         android:text="@string/edit"
         android:textColor="@color/colorWhite"
-        android:textSize="20sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/btnDelete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/margin"
         android:background="@drawable/round_button"
         android:text="@string/delete"
         android:textColor="@color/colorWhite"
-        android:textSize="20sp" />
+        android:textSize="@dimen/text_size" />
 
 
 </LinearLayout>

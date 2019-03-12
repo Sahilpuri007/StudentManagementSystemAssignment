@@ -15,7 +15,7 @@
         <ImageView
             android:id="@+id/imageViewLogo"
             android:layout_width="wrap_content"
-            android:layout_height="250dp"
+            android:layout_height="@dimen/splash_logo"
             android:layout_centerInParent="true"
             android:src="@drawable/app_logo" />
 
@@ -24,12 +24,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageViewLogo"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/splash_text"
             android:text="@string/app_name"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
             android:textColor="@color/colorWhite"
-            android:textSize="20sp"
+            android:textSize="@dimen/text_size"
             android:textStyle="bold" />
     </RelativeLayout>
 

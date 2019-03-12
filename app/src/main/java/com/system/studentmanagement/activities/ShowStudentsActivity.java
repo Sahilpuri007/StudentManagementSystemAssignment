@@ -93,7 +93,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
      */
     private void manageIntent() {
         intent = new Intent(ShowStudentsActivity.this, StudentActivity.class);
-        intent.putParcelableArrayListExtra("arraylist", studentArrayList);
+        intent.putParcelableArrayListExtra(getString(R.string.extra_arraylist), studentArrayList);
     }
 
     /*
@@ -211,8 +211,8 @@ public class ShowStudentsActivity extends AppCompatActivity {
      * @param int position
      */
     private void viewMode(final int position) {
-        intent.putExtra("studentObj", studentArrayList.get(position));
-        intent.putExtra("Option", Constants.VIEW_STUDENT_INFO);
+        intent.putExtra(getString(R.string.extra_student), studentArrayList.get(position));
+        intent.putExtra(getString(R.string.extra_option), Constants.VIEW_STUDENT_INFO);
         startActivity(intent);
     }
 
@@ -222,9 +222,9 @@ public class ShowStudentsActivity extends AppCompatActivity {
      * @param int position
      */
     private void editMode(final int position) {
-        intent.putExtra("studentObj", studentArrayList.get(position));
-        intent.putExtra("position", position);
-        intent.putExtra("Option", Constants.EDIT_STUDENT_INFO);
+        intent.putExtra(getString(R.string.extra_student), studentArrayList.get(position));
+        intent.putExtra(getString(R.string.extra_position), position);
+        intent.putExtra(getString(R.string.extra_option), Constants.EDIT_STUDENT_INFO);
         startActivityForResult(intent, Constants.EDIT_STUDENT_INFO);
     }
 
@@ -238,7 +238,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
                 .create();
         alertDialog.setTitle(getString(R.string.delete_dialog_title));
         alertDialog.setMessage(getString(R.string.delete_dialog_message));
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Confirm", new DialogInterface
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.confirm), new DialogInterface
                 .OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -250,7 +250,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
                 alertDialog.cancel();
             }
         });
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Back", new DialogInterface
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.back), new DialogInterface
                 .OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -265,7 +265,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
      */
 
     private void addStudent() {
-        intent.putExtra("Option", Constants.ADD_STUDENT_INFO);
+        intent.putExtra(getString(R.string.extra_option), Constants.ADD_STUDENT_INFO);
         startActivityForResult(intent, Constants.ADD_STUDENT_INFO);
     }
 
@@ -335,10 +335,10 @@ public class ShowStudentsActivity extends AppCompatActivity {
     private void deleteAllDialog() {
         final AlertDialog alertDialog = new AlertDialog.Builder(ShowStudentsActivity.this)
                 .create();
+        alertDialog.setTitle(getString(R.string.dialog_title));
         if(studentArrayList.size()==0){
-            alertDialog.setTitle("Delete Student Info!");
-            alertDialog.setMessage("No Students Found to Delete!");
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Ok", new DialogInterface
+            alertDialog.setMessage(getString(R.string.dialog_empty_msg));
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface
                     .OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -347,9 +347,8 @@ public class ShowStudentsActivity extends AppCompatActivity {
             });
         }
         else {
-            alertDialog.setTitle("Delete Student Info!");
-            alertDialog.setMessage("Are you sure you want to delete all students");
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES", new DialogInterface
+            alertDialog.setMessage(getString(R.string.dialog_msg));
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface
                     .OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -359,7 +358,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
                     alertDialog.cancel();
                 }
             });
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", new DialogInterface
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.no), new DialogInterface
                     .OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -381,11 +380,11 @@ public class ShowStudentsActivity extends AppCompatActivity {
 
         Student student;
         if (resultCode == RESULT_OK && requestCode == Constants.ADD_STUDENT_INFO) {
-            student = intent.getParcelableExtra("studentObj");
+            student = intent.getParcelableExtra(getString(R.string.extra_student));
             addStudentToList(student);
         }
         if (resultCode == Constants.EDIT_STUDENT_INFO) {
-            student = intent.getParcelableExtra("studentObj");
+            student = intent.getParcelableExtra(getString(R.string.extra_student));
             addUpdatedStudentToList(student);
 
 
@@ -406,7 +405,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
      * to  add updated Student to array list
      */
     private void addUpdatedStudentToList(final Student student) {
-        int position = intent.getIntExtra("position", -1);
+        int position = intent.getIntExtra(getString(R.string.extra_position), -1);
         studentArrayList.remove(position);
         studentArrayList.add(position, student);
         studentListAdapter.notifyDataSetChanged();

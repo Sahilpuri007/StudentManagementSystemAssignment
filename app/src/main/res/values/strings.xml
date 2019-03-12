@@ -2,8 +2,6 @@
     <string name="app_name">Student Management System</string>
     <string name="student_details">Student Details</string>
     <string name="add_here">Add Student</string>
-    <string name="name">Name :</string>
-    <string name="roll_no">Roll. No. :</string>
     <string name="add_student_details">Add Student Details</string>
     <string name="add_name">Name</string>
     <string name="add_roll_no">Roll.No.</string>
@@ -19,4 +17,22 @@
     <string name="menu_button">Menu Button</string>
     <string name="delete_dialog_title">Delete Student Info!</string>
     <string name="delete_dialog_message">Are you sure you want to delete this student</string>
+    <string name="error_roll_no">Not Unique Roll No.</string>
+    <string name="extra_arraylist">arraylist</string>
+    <string name="extra_student">studentObj</string>
+    <string name="extra_option">Option</string>
+    <string name="extra_position">position</string>
+    <string name="error_name">Enter a Valid Name</string>
+    <string name="error_name_requires">Student Name is required</string>
+    <string name="error_rollno">Student Roll.No is required</string>
+    <string name="confirm">Confirm</string>
+    <string name="back">Back</string>
+    <string name="dialog_title">Delete Student Info!</string>
+    <string name="dialog_empty_msg">No Students Found to Delete!</string>
+    <string name="ok">Ok</string>
+    <string name="dialog_msg">Are you sure you want to delete all students</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="sort_by_name">Sort by Name</string>
+    <string name="sort_by_roll_no">Sort by Roll No.</string>
 </resources>

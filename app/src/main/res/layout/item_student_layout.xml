@@ -3,11 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="2dp"
-    android:layout_marginRight="2dp"
-    android:layout_marginBottom="2dp"
+    android:layout_margin="@dimen/item_margin"
     android:orientation="vertical"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="@dimen/item_radius">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,10 +18,8 @@
             android:id="@+id/textViewName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="15dp"
-            android:textSize="20sp"
+            android:layout_margin="@dimen/margin"
+            android:textSize="@dimen/text_size"
             android:textStyle="bold"
             app:fontFamily="sans-serif-light" />
 
@@ -33,10 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="15dp" />
+            android:layout_margin="@dimen/margin" />
 
     </LinearLayout>
 

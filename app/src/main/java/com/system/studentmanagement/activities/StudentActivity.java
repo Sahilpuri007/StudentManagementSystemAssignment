@@ -61,17 +61,17 @@ public class StudentActivity extends AppCompatActivity {
      */
     private void manageIntent() {
         intent = getIntent();
-        studentArrayList = intent.getParcelableArrayListExtra("arraylist");
-        final Student student = intent.getParcelableExtra("studentObj");
-        String code = Integer.toString(intent.getIntExtra("Option", 404));
-        if (intent.getIntExtra("Option", Constants.ERROR_CODE) == Constants.ADD_STUDENT_INFO) {
+        studentArrayList = intent.getParcelableArrayListExtra(getString(R.string.extra_arraylist));
+        final Student student = intent.getParcelableExtra(getString(R.string.extra_student));
+        String code = Integer.toString(intent.getIntExtra(getString(R.string.extra_option), 404));
+        if (intent.getIntExtra(getString(R.string.extra_option), Constants.ERROR_CODE) == Constants.ADD_STUDENT_INFO) {
             addStudent(studentArrayList);
         }
-        if (intent.getIntExtra("Option", Constants.ERROR_CODE) == Constants.VIEW_STUDENT_INFO) {
+        if (intent.getIntExtra(getString(R.string.extra_option), Constants.ERROR_CODE) == Constants.VIEW_STUDENT_INFO) {
             viewStudent(student);
         }
-        if (intent.getIntExtra("Option", Constants.ERROR_CODE) == Constants.EDIT_STUDENT_INFO) {
-            int position = intent.getIntExtra("position", -1);
+        if (intent.getIntExtra(getString(R.string.extra_option), Constants.ERROR_CODE) == Constants.EDIT_STUDENT_INFO) {
+            int position = intent.getIntExtra(getString(R.string.extra_position), -1);
             updateStudent(student, position, studentArrayList);
         }
     }
@@ -100,14 +100,14 @@ public class StudentActivity extends AppCompatActivity {
                 } else {
                     for (Student ItrStudent : studentArrayList) {
                         if (student.getStudentRollNo().equals(ItrStudent.getStudentRollNo())) {
-                            editTextRollNo.setError("Not Unique Roll No.");
+                            editTextRollNo.setError(getString(R.string.error_roll_no));
                             counter = -1;
                         }
                     }
                     Intent returnIntent = new Intent();
                     if (counter != -1) {
 
-                        returnIntent.putExtra("studentObj", student);
+                        returnIntent.putExtra(getString(R.string.extra_student), student);
                         Log.d("inside add", returnIntent.toString());
                         setResult(RESULT_OK, returnIntent);
                         finish();
@@ -168,7 +168,7 @@ public class StudentActivity extends AppCompatActivity {
                             counter++;
                             continue;
                         } else if (student.getStudentRollNo().equals(ItrStudent.getStudentRollNo())) {
-                            editTextRollNo.setError("Not Unique Roll No.");
+                            editTextRollNo.setError(getString(R.string.error_roll_no));
                             counter = -1;
 
                             break;
@@ -178,8 +178,8 @@ public class StudentActivity extends AppCompatActivity {
                     Intent returnIntent = new Intent();
                     if (counter != -1) {
 
-                        returnIntent.putExtra("studentObj", student);
-                        returnIntent.putExtra("position", position);
+                        returnIntent.putExtra(getString(R.string.extra_student), student);
+                        returnIntent.putExtra(getString(R.string.extra_position), position);
                         setResult(Constants.EDIT_STUDENT_INFO, returnIntent);
                         finish();
                     }
@@ -196,15 +196,15 @@ public class StudentActivity extends AppCompatActivity {
     private boolean validate() {
 
         if (isValidName(editTextName)) {
-            editTextName.setError("Enter a Valid Name");
+            editTextName.setError(getString(R.string.error_name));
             if (isEmpty(editTextName)) {
-                editTextName.setError("Student Name is required");
+                editTextName.setError(getString(R.string.error_name_requires));
             }
             return false;
         }
 
         if (isEmpty(editTextRollNo)) {
-            editTextRollNo.setError("Student Roll.No is required");
+            editTextRollNo.setError(getString(R.string.error_rollno));
             return false;
         }
         return true;
