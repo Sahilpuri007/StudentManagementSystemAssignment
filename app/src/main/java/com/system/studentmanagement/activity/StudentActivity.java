@@ -1,9 +1,8 @@
-package com.system.studentmanagement.activities;
+package com.system.studentmanagement.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -48,10 +47,10 @@ public class StudentActivity extends AppCompatActivity {
      * To Initialize all views
      */
     private void initComponents() {
-        etName = findViewById(R.id.student_etName);
-        etRollNo = findViewById(R.id.student_etRollNo);
-        btnAddStudent = findViewById(R.id.student_btnAddStudent);
-        tvTitle = findViewById(R.id.student_tv_title_screen);
+        etName = findViewById(R.id.etName);
+        etRollNo = findViewById(R.id.etRollNo);
+        btnAddStudent = findViewById(R.id.btnAddStudent);
+        tvTitle = findViewById(R.id.tvTitleScreen);
     }
 
     /*
@@ -96,7 +95,7 @@ public class StudentActivity extends AppCompatActivity {
                 Student student = new Student(studentName, studentRollNo);
                 Log.d("inside add", studentName + " "+ studentRollNo + " "+student +" " + student.getName() + " "+ student.getRollNo());
 
-                if (!validate()) {
+                if (validate()) {
                     Log.d("Validate", "Wrong");
 
                 } else {
@@ -160,7 +159,7 @@ public class StudentActivity extends AppCompatActivity {
                 int counter = 0;
                 String studentName = etName.getText().toString().trim();
                 String studentRollNo = etRollNo.getText().toString();
-                if (!validate()) {
+                if (validate()) {
                     Log.d("Validate", "Wrong");
                 } else {
                     Student student = new Student(studentName, studentRollNo);
@@ -199,19 +198,20 @@ public class StudentActivity extends AppCompatActivity {
     private boolean validate() {
 
         Validator validator= new Validator();
-        if (validator.isValidName(etName)) {
+        if (validator.isEmpty(etName)) {
+            etName.setError(getString(R.string.error_name_requires));
+            return true;
+        }
+        else if (validator.isValidName(etName)) {
             etName.setError(getString(R.string.error_name));
-            if (validator.isEmpty(etName)) {
-                etName.setError(getString(R.string.error_name_requires));
-            }
-            return false;
+            return true;
         }
 
-        if (validator.isEmpty(etRollNo)) {
+        else if (validator.isEmpty(etRollNo)) {
             etRollNo.setError(getString(R.string.error_rollno));
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
 }

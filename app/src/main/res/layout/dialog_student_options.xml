@@ -18,7 +18,7 @@
         />
 
     <Button
-        android:id="@+id/btnView"
+        android:id="@+id/student_dialog_btnView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
@@ -28,7 +28,7 @@
         android:textSize="@dimen/text_size" />
 
     <Button
-        android:id="@+id/btnEdit"
+        android:id="@+id/student_dialog_btnEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
@@ -38,7 +38,7 @@
         android:textSize="@dimen/text_size" />
 
     <Button
-        android:id="@+id/btnDelete"
+        android:id="@+id/student_dialog_btnDelete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"

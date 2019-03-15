@@ -1,4 +1,4 @@
-package com.system.studentmanagement.activities;
+package com.system.studentmanagement.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,9 +21,10 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
-import com.system.studentmanagement.adapters.StudentListAdapter;
+import com.system.studentmanagement.adapter.StudentListAdapter;
 import com.system.studentmanagement.R;
 import com.system.studentmanagement.model.Student;
+import com.system.studentmanagement.touchlistener.RecyclerTouchListener;
 import com.system.studentmanagement.util.Constants;
 
 import java.util.ArrayList;
@@ -37,14 +38,14 @@ import java.util.Comparator;
  * It contains A recycler view , a add button , and various other options for user
  */
 
-public class ShowStudentsActivity extends AppCompatActivity {
+public class ShowStudentsActivity extends AppCompatActivity implements RecyclerTouchListener  {
 
     //Arraylist of Student Type to store Students
     private ArrayList<Student> studentArrayList = new ArrayList<Student>();
-    private RecyclerView recyclerView;
+    private RecyclerView rvStudentList;
     private Button btnAdd, btnView, btnEdit, btnDelete;
     private ImageButton ibSortMenu, ibDeleteAll;
-    private Switch layoutSwitch;
+    private Switch swLayout;
     private RelativeLayout rlEmptyView;
     private StudentListAdapter studentListAdapter;
     private PopupMenu dropDownMenu;
@@ -61,21 +62,28 @@ public class ShowStudentsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onItemClick(int position) {
+
+        studentDialog(position);
+
+    }
+
     /*
      * method initComponents
      * To Initialize all views
      */
     private void initComponents() {
-        btnAdd = findViewById(R.id.show_student_btnAdd);
-        layoutSwitch = findViewById(R.id.show_student_layoutSwitch);
-        rlEmptyView = findViewById(R.id.show_student_rlemptyView);
-        ibSortMenu = findViewById(R.id.show_student_ibSort);
-        ibDeleteAll = findViewById(R.id.show_student_ibDeleteAll);
-        recyclerView = findViewById(R.id.show_student_recyclerView);
+        btnAdd = findViewById(R.id.btnAdd);
+        swLayout = findViewById(R.id.swLayout);
+        rlEmptyView = findViewById(R.id.rlEmptyView);
+        ibSortMenu = findViewById(R.id.ibSort);
+        ibDeleteAll = findViewById(R.id.ibDeleteAll);
+        rvStudentList = findViewById(R.id.rvStudentList);
         dropDownMenu = new PopupMenu(this, ibSortMenu);
         dropDownMenu.getMenuInflater().inflate(R.menu.drop_down_sort_option, dropDownMenu.getMenu());
         mContext = this;
-        studentListAdapter = new StudentListAdapter(studentArrayList);
+        studentListAdapter = new StudentListAdapter(studentArrayList,this);
     }
 
 
@@ -84,31 +92,29 @@ public class ShowStudentsActivity extends AppCompatActivity {
      * To set layout  and adapter on RecyclerView
      */
     private void buildRecyclerView() {
-        recyclerView.setLayoutManager(switchManager(false));
-        recyclerView.setAdapter(studentListAdapter);
+        rvStudentList.setLayoutManager(switchManager(false));
+        rvStudentList.setAdapter(studentListAdapter);
     }
+
+
+
     /*
      * method setAllListeners
      * To set listeners to various components
      */
 
     private void setAllListeners() {
-        studentListAdapter.setOnItemClickListener(new StudentListAdapter.OnItemClickListener() {
-            @Override
-            public void OnItemClick(final int position) {
-                studentDialog(position);
-            }
-        });
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addStudent();
             }
         });
-        layoutSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        swLayout.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                recyclerView.setLayoutManager(switchManager(isChecked));
+                rvStudentList.setLayoutManager(switchManager(isChecked));
 
             }
         });
@@ -259,7 +265,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
 
     /*
      * method switchManager
-     * To return Layout for recyclerView
+     * To return Layout for rvStudentList
      * @param boolean isChecked - from switch
      * @return layout for RecyclerView
      */
@@ -291,7 +297,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
     }
     /*
      * method sortByName
-     * To sort recyclerView items by Student Name
+     * To sort rvStudentList items by Student Name
      */
     private void sortByName() {
         Collections.sort(studentArrayList, new Comparator<Student>() {
@@ -305,7 +311,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
     }
     /*
      * method sortByRollNo
-     * To sort recyclerView items by Student Roll No
+     * To sort rvStudentList items by Student Roll No
      */
     private void sortByRollNo() {
         Collections.sort(studentArrayList, new Comparator<Student>() {
@@ -401,7 +407,6 @@ public class ShowStudentsActivity extends AppCompatActivity {
         studentArrayList.add(position, student);
         studentListAdapter.notifyDataSetChanged();
     }
-
 
 
 

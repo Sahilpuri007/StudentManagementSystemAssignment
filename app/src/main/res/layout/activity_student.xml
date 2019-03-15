@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.StudentActivity">
+    tools:context=".activity.StudentActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_add"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary">
 
         <TextView
-            android:id="@+id/title_screen"
+            android:id="@+id/tvTitleScreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_student_details"
@@ -36,7 +36,6 @@
             android:padding="@dimen/padding">
 
             <ImageView
-                android:id="@+id/no_added_image"
                 android:layout_width="@dimen/add_image_size"
                 android:layout_height="@dimen/add_image_size"
                 android:layout_gravity="center"
@@ -44,7 +43,7 @@
                 android:src="@drawable/ic_add_student" />
 
             <EditText
-                android:id="@+id/editTextName"
+                android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"
@@ -54,7 +53,7 @@
                 android:textColor="@color/colorBlack" />
 
             <EditText
-                android:id="@+id/editTextRollNo"
+                android:id="@+id/etRollNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin"

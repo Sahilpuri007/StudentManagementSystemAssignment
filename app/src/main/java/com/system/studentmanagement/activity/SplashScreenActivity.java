@@ -1,20 +1,21 @@
-package com.system.studentmanagement;
+package com.system.studentmanagement.activity;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.system.studentmanagement.activities.ShowStudentsActivity;
+import com.system.studentmanagement.R;
+import com.system.studentmanagement.util.Constants;
 
 /*
  * @author Sahil Puri
  * SplashScreen Activity
  * The first screen which shows the logo and name of the app
  */
-public class SplashScreen extends AppCompatActivity {
+public class SplashScreenActivity extends AppCompatActivity {
 
-   private static final long SPLASH_SCREEN_TIME = 1000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +24,10 @@ public class SplashScreen extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                SplashScreen.this.startActivity(new Intent(SplashScreen.this, ShowStudentsActivity.class));
+                SplashScreenActivity.this.startActivity(new Intent(SplashScreenActivity.this, ShowStudentsActivity.class));
                 finish();
             }
-        }, SPLASH_SCREEN_TIME);
+        }, Constants.SPLASH_SCREEN_TIME);
 
 
     }

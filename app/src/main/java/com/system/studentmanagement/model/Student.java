@@ -11,28 +11,17 @@ import android.os.Parcelable;
  */
 
 public class Student implements Parcelable {
-    private String studentName;
-    private String studentRollNo;
+    private String name;
+    private String rollNo;
 
-
-    /*
-     * This is Constructor of Student Class
-     * @param String studentName
-     * @param String studentRollNo
-     */
     public Student(final String studentName,final  String studentRollNo) {
-        this.studentName = studentName;
-        this.studentRollNo = studentRollNo;
+        this.name = studentName;
+        this.rollNo = studentRollNo;
     }
 
-
-    /*
-     * This is Constructor of Student Class
-     * @param Parcel in
-     */
     private Student(Parcel in) {
-        studentName = in.readString();
-        studentRollNo = in.readString();
+        name = in.readString();
+        rollNo = in.readString();
 
     }
 
@@ -55,27 +44,17 @@ public class Student implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(studentName);
-        dest.writeString(studentRollNo);
+        dest.writeString(name);
+        dest.writeString(rollNo);
 
     }
 
-    /**
-     * This method used to get Name of Student
-     *
-     * @return String studentName
-     */
-    public String getStudentName() {
-        return studentName;
+    public String getName() {
+        return name;
     }
 
-    /**
-     * This method used to get RollNo of Student
-     *
-     * @return String studentRollNo
-     */
-    public String getStudentRollNo() {
-        return studentRollNo;
+    public String getRollNo() {
+        return rollNo;
     }
 
 

@@ -9,15 +9,15 @@
         android:roundIcon="@mipmap/ic_student_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name="com.system.studentmanagement.SplashScreen">
+        <activity android:name="com.system.studentmanagement.activity.SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.system.studentmanagement.activities.StudentActivity" />
-        <activity android:name="com.system.studentmanagement.activities.ShowStudentsActivity"/>
+        <activity android:name="com.system.studentmanagement.activity.ShowStudentsActivity" />
+        <activity android:name="com.system.studentmanagement.activity.StudentActivity"/>
     </application>
 
 </manifest>
