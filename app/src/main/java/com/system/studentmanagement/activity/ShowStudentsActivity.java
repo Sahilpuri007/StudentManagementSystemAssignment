@@ -21,8 +21,6 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
-import android.widget.Toolbar;
-
 import com.system.studentmanagement.adapters.StudentListAdapter;
 import com.system.studentmanagement.R;
 import com.system.studentmanagement.model.Student;
@@ -45,25 +43,22 @@ public class ShowStudentsActivity extends AppCompatActivity {
     private ArrayList<Student> studentArrayList = new ArrayList<Student>();
     private RecyclerView recyclerView;
     private Button btnAdd, btnView, btnEdit, btnDelete;
-    private ImageButton sortMenu, deleteAll;
+    private ImageButton ibSortMenu, ibDeleteAll;
     private Switch layoutSwitch;
-    private RelativeLayout emptyView;
-    private Toolbar toolbar;
+    private RelativeLayout rlEmptyView;
     private StudentListAdapter studentListAdapter;
-    private LinearLayoutManager linearLayoutManager;
-    private GridLayoutManager gridLayoutManager;
     private PopupMenu dropDownMenu;
     private Context mContext;
-    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_students);
+
         initComponents();
-        manageIntent();
         buildRecyclerView();
         setAllListeners();
+
     }
 
     /*
@@ -71,30 +66,18 @@ public class ShowStudentsActivity extends AppCompatActivity {
      * To Initialize all views
      */
     private void initComponents() {
-        btnAdd = findViewById(R.id.addButton);
-        layoutSwitch = findViewById(R.id.layoutSwitch);
-        emptyView = findViewById(R.id.emptyView);
-        toolbar = findViewById(R.id.toolbar_add);
-        sortMenu = findViewById(R.id.btnSort);
-        deleteAll = findViewById(R.id.btnDeleteAll);
-        emptyView = findViewById(R.id.emptyView);
-        recyclerView = findViewById(R.id.recyclerView);
-        dropDownMenu = new PopupMenu(this, sortMenu);
+        btnAdd = findViewById(R.id.show_student_btnAdd);
+        layoutSwitch = findViewById(R.id.show_student_layoutSwitch);
+        rlEmptyView = findViewById(R.id.show_student_rlemptyView);
+        ibSortMenu = findViewById(R.id.show_student_ibSort);
+        ibDeleteAll = findViewById(R.id.show_student_ibDeleteAll);
+        recyclerView = findViewById(R.id.show_student_recyclerView);
+        dropDownMenu = new PopupMenu(this, ibSortMenu);
         dropDownMenu.getMenuInflater().inflate(R.menu.drop_down_sort_option, dropDownMenu.getMenu());
         mContext = this;
         studentListAdapter = new StudentListAdapter(studentArrayList);
-        linearLayoutManager = new LinearLayoutManager(this);
-        gridLayoutManager = new GridLayoutManager(this, 2);
     }
 
-    /*
-     * method manageIntent
-     * To create and put extra
-     */
-    private void manageIntent() {
-        intent = new Intent(ShowStudentsActivity.this, StudentActivity.class);
-        intent.putParcelableArrayListExtra(getString(R.string.extra_arraylist), studentArrayList);
-    }
 
     /*
      * method buildRecyclerView
@@ -135,13 +118,13 @@ public class ShowStudentsActivity extends AppCompatActivity {
                 return menuManger(item.getItemId());
             }
         });
-        sortMenu.setOnClickListener(new View.OnClickListener() {
+        ibSortMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dropDownMenu.show();
             }
         });
-        deleteAll.setOnClickListener(new View.OnClickListener() {
+        ibDeleteAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleteAllDialog();
@@ -188,10 +171,9 @@ public class ShowStudentsActivity extends AppCompatActivity {
      * @param View mView
      */
     private void initAlertDialogView(final View mView) {
-        btnView = mView.findViewById(R.id.btnView);
-        btnEdit = mView.findViewById(R.id.btnEdit);
-        btnDelete = mView.findViewById(R.id.btnDelete);
-
+        btnView = mView.findViewById(R.id.student_dialog_btnView);
+        btnEdit = mView.findViewById(R.id.student_dialog_btnEdit);
+        btnDelete = mView.findViewById(R.id.student_dialog_btnDelete);
     }
 
     /*
@@ -211,8 +193,10 @@ public class ShowStudentsActivity extends AppCompatActivity {
      * @param int position
      */
     private void viewMode(final int position) {
-        intent.putExtra(getString(R.string.extra_student), studentArrayList.get(position));
-        intent.putExtra(getString(R.string.extra_option), Constants.VIEW_STUDENT_INFO);
+        Intent intent = new Intent(ShowStudentsActivity.this, StudentActivity.class);
+        intent.putParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST, studentArrayList);
+        intent.putExtra(Constants.EXTRA_STUDENT_OBJECT, studentArrayList.get(position));
+        intent.putExtra(Constants.EXTRA_OPTION, Constants.VIEW_STUDENT_INFO);
         startActivity(intent);
     }
 
@@ -222,9 +206,11 @@ public class ShowStudentsActivity extends AppCompatActivity {
      * @param int position
      */
     private void editMode(final int position) {
-        intent.putExtra(getString(R.string.extra_student), studentArrayList.get(position));
-        intent.putExtra(getString(R.string.extra_position), position);
-        intent.putExtra(getString(R.string.extra_option), Constants.EDIT_STUDENT_INFO);
+        Intent intent = new Intent(ShowStudentsActivity.this, StudentActivity.class);
+        intent.putParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST, studentArrayList);
+        intent.putExtra(Constants.EXTRA_STUDENT_OBJECT, studentArrayList.get(position));
+        intent.putExtra(Constants.EXTRA_POSITION, position);
+        intent.putExtra(Constants.EXTRA_OPTION, Constants.EDIT_STUDENT_INFO);
         startActivityForResult(intent, Constants.EDIT_STUDENT_INFO);
     }
 
@@ -245,7 +231,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
                 studentArrayList.remove(position);
                 studentListAdapter.notifyDataSetChanged();
                 if (studentArrayList.size() == 0) {
-                    emptyView.setVisibility(View.VISIBLE);
+                    rlEmptyView.setVisibility(View.VISIBLE);
                 }
                 alertDialog.cancel();
             }
@@ -265,7 +251,9 @@ public class ShowStudentsActivity extends AppCompatActivity {
      */
 
     private void addStudent() {
-        intent.putExtra(getString(R.string.extra_option), Constants.ADD_STUDENT_INFO);
+        Intent intent = new Intent(ShowStudentsActivity.this, StudentActivity.class);
+        intent.putParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST, studentArrayList);
+        intent.putExtra(Constants.EXTRA_OPTION, Constants.ADD_STUDENT_INFO);
         startActivityForResult(intent, Constants.ADD_STUDENT_INFO);
     }
 
@@ -277,9 +265,9 @@ public class ShowStudentsActivity extends AppCompatActivity {
      */
     private RecyclerView.LayoutManager switchManager(final boolean isChecked) {
         if (isChecked) {
-            return gridLayoutManager;
+            return  new GridLayoutManager(this, 2);
         } else {
-            return linearLayoutManager;
+            return  new LinearLayoutManager(this);
         }
     }
 
@@ -297,8 +285,9 @@ public class ShowStudentsActivity extends AppCompatActivity {
             case R.id.sort_roll_no:
                 sortByRollNo();
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
     /*
      * method sortByName
@@ -308,7 +297,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
         Collections.sort(studentArrayList, new Comparator<Student>() {
             @Override
             public int compare(Student o1, Student o2) {
-                return o1.getStudentName().compareToIgnoreCase(o2.getStudentName());
+                return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
         studentListAdapter.notifyDataSetChanged();
@@ -322,8 +311,8 @@ public class ShowStudentsActivity extends AppCompatActivity {
         Collections.sort(studentArrayList, new Comparator<Student>() {
             @Override
             public int compare(Student o1, Student o2) {
-                return (Integer.parseInt(o1.getStudentRollNo())) -
-                        (Integer.parseInt(o2.getStudentRollNo()));
+                return (Integer.parseInt(o1.getRollNo())) -
+                        (Integer.parseInt(o2.getRollNo()));
             }
         });
         studentListAdapter.notifyDataSetChanged();
@@ -354,7 +343,7 @@ public class ShowStudentsActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     studentArrayList.clear();
                     studentListAdapter.notifyDataSetChanged();
-                    emptyView.setVisibility(View.VISIBLE);
+                    rlEmptyView.setVisibility(View.VISIBLE);
                     alertDialog.cancel();
                 }
             });
@@ -378,14 +367,17 @@ public class ShowStudentsActivity extends AppCompatActivity {
      */
     protected void onActivityResult(final int requestCode,final  int resultCode, final Intent intent) {
 
+        if (studentArrayList.size() > 0) {
+            rlEmptyView.setVisibility(View.INVISIBLE);
+        }
         Student student;
         if (resultCode == RESULT_OK && requestCode == Constants.ADD_STUDENT_INFO) {
-            student = intent.getParcelableExtra(getString(R.string.extra_student));
+            student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
             addStudentToList(student);
         }
         if (resultCode == Constants.EDIT_STUDENT_INFO) {
-            student = intent.getParcelableExtra(getString(R.string.extra_student));
-            addUpdatedStudentToList(student);
+            student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
+            addUpdatedStudentToList(student,intent);
 
 
         }
@@ -396,16 +388,15 @@ public class ShowStudentsActivity extends AppCompatActivity {
      */
     private void addStudentToList(final Student student) {
         studentArrayList.add(student);
-        if (studentArrayList.size() != 0) {
-            emptyView.setVisibility(View.INVISIBLE);
-        }
+        studentListAdapter.notifyDataSetChanged();
+        rlEmptyView.setVisibility(View.INVISIBLE);
     }
     /*
      * method addUpdatedStudentToList
      * to  add updated Student to array list
      */
-    private void addUpdatedStudentToList(final Student student) {
-        int position = intent.getIntExtra(getString(R.string.extra_position), -1);
+    private void addUpdatedStudentToList(final Student student,final Intent intent) {
+        int position = intent.getIntExtra(Constants.EXTRA_POSITION, -1);
         studentArrayList.remove(position);
         studentArrayList.add(position, student);
         studentListAdapter.notifyDataSetChanged();

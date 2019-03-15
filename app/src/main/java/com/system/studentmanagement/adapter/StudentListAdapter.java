@@ -42,8 +42,8 @@ public class StudentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         StudentViewHolder studentViewHolder = (StudentViewHolder) viewHolder;
-        studentViewHolder.textViewName.setText(studentArrayList.get(i).getStudentName());
-        studentViewHolder.textViewRollNo.setText(studentArrayList.get(i).getStudentRollNo());
+        studentViewHolder.textViewName.setText(studentArrayList.get(i).getName());
+        studentViewHolder.textViewRollNo.setText(studentArrayList.get(i).getRollNo());
 
 
     }
@@ -68,8 +68,8 @@ public class StudentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         public StudentViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewName = itemView.findViewById(R.id.textViewName);
-            textViewRollNo = itemView.findViewById(R.id.textViewRollNo);
+            textViewName = itemView.findViewById(R.id.tvName);
+            textViewRollNo = itemView.findViewById(R.id.tvRollNo);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
