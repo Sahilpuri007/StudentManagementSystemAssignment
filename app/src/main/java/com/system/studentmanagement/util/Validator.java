@@ -7,7 +7,7 @@ public class Validator {
 
 
     private static final String NAME_REGEX = "^[\\p{L} .'-]+$";
-
+    private final static String ID_REGEX="^[1-9][0-9]*$";
     /*
      * Method isEmpty - to check if input is null
      * @param EditText editText - input from fields
@@ -25,6 +25,10 @@ public class Validator {
      */
     public boolean isValidName(final EditText editText) {
         return !editText.getText().toString().trim().matches(NAME_REGEX);
+    }
+
+    public boolean isValidRollNo(final EditText editText) {
+        return !editText.getText().toString().trim().matches(ID_REGEX);
     }
 
 }

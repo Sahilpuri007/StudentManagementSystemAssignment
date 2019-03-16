@@ -1,6 +1,7 @@
 package com.system.studentmanagement.activity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 
 import com.system.studentmanagement.R;
+import com.system.studentmanagement.dbmanager.DatabaseHelper;
 import com.system.studentmanagement.model.Student;
 import com.system.studentmanagement.util.Constants;
 import com.system.studentmanagement.util.Validator;
@@ -30,7 +32,8 @@ public class StudentActivity extends AppCompatActivity {
     private EditText etName, etRollNo;
     private TextView tvTitle;
     private Button btnAddStudent;
-    private ArrayList<Student> studentArrayList;
+    private ArrayList<Student> studentArrayList = new ArrayList<>();;
+    private DatabaseHelper dbHelper;
 
 
     @Override
@@ -51,6 +54,10 @@ public class StudentActivity extends AppCompatActivity {
         etRollNo = findViewById(R.id.etRollNo);
         btnAddStudent = findViewById(R.id.btnAddStudent);
         tvTitle = findViewById(R.id.tvTitleScreen);
+
+        dbHelper = new DatabaseHelper(this);
+        studentArrayList.addAll(dbHelper.getAllStudents());
+
     }
 
     /*
@@ -59,7 +66,7 @@ public class StudentActivity extends AppCompatActivity {
      */
     private void manageIntent() {
        Intent intent = getIntent();
-        studentArrayList = intent.getParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST);
+        //studentArrayList = intent.getParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST);
         final Student student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
        if (intent.getIntExtra(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.VIEW_STUDENT_INFO) {
             viewStudent(student);
@@ -69,8 +76,8 @@ public class StudentActivity extends AppCompatActivity {
             updateStudent(student, position, studentArrayList);
         }
        else{
-           Log.d("here ",studentArrayList.toString());
-            addStudent(studentArrayList);
+          // Log.d("here ",studentArrayList.toString());
+            addStudent();
         }
 
     }
@@ -80,7 +87,8 @@ public class StudentActivity extends AppCompatActivity {
      * to add new Student
      * @param ArrayList<Student> studentArrayList
      */
-    private void addStudent(final ArrayList<Student> studentArrayList) {
+    private void addStudent() {
+        dbHelper = new DatabaseHelper(this);
         etName.requestFocus();
         btnAddStudent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,29 +101,34 @@ public class StudentActivity extends AppCompatActivity {
                 String studentName = etName.getText().toString().trim();
                 String studentRollNo = etRollNo.getText().toString();
                 Student student = new Student(studentName, studentRollNo);
-                Log.d("inside add", studentName + " "+ studentRollNo + " "+student +" " + student.getName() + " "+ student.getRollNo());
+                Log.d("inside add", studentName + " " + studentRollNo + " " + student + " " + student.getName() + " " + student.getRollNo());
 
                 if (validate()) {
                     Log.d("Validate", "Wrong");
 
                 } else {
-                    for (Student ItrStudent : studentArrayList) {
-                        if (student.getRollNo().equals(ItrStudent.getRollNo())) {
-                            etRollNo.setError(getString(R.string.error_roll_no));
-                            counter = -1;
-                        }
+                    if(!(studentArrayList.size()==0)){
+                   for (Student ItrStudent : studentArrayList) {
+                       if (student.getRollNo().equals(ItrStudent.getRollNo())) {
+                           etRollNo.setError(getString(R.string.error_roll_no));
+                           counter = -1;
+                       }
+                   }
                     }
-                    Intent returnIntent = getIntent();
-                    if (counter != -1) {
+                    Intent returnIntent = new Intent();
+                   if (counter != -1) {
 
-                        returnIntent.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
-                        Log.d("inside add", returnIntent.toString());
+                        //returnIntent.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
+                        Log.d("inside add", studentName);
+                        dbHelper.getWritableDatabase();
+                        dbHelper.addStudent(student);
+                        returnIntent.putExtra("id", studentRollNo);
                         setResult(RESULT_OK, returnIntent);
                         finish();
-                    }
+                   }
                 }
-
             }
+
         });
 
     }
@@ -144,13 +157,14 @@ public class StudentActivity extends AppCompatActivity {
      * @param int position
      * @param ArrayList<Student> studentArrayList
      */
-    private void updateStudent(final Student student, final int position,
+    private void updateStudent(final Student oldstudent, final int position,
                                final ArrayList<Student> studentArrayList) {
 
         tvTitle.setText(getString(R.string.update_title));
         btnAddStudent.setText(getString(R.string.update));
-        etRollNo.setText(student.getRollNo());
-        etName.setText(student.getName());
+        final String oldRollNo = oldstudent.getRollNo();
+        etRollNo.setText(oldstudent.getRollNo());
+        etName.setText(oldstudent.getName());
         etName.requestFocus();
 
         btnAddStudent.setOnClickListener(new View.OnClickListener() {
@@ -159,17 +173,18 @@ public class StudentActivity extends AppCompatActivity {
                 int counter = 0;
                 String studentName = etName.getText().toString().trim();
                 String studentRollNo = etRollNo.getText().toString();
+                Student newstudent;
                 if (validate()) {
                     Log.d("Validate", "Wrong");
                 } else {
-                    Student student = new Student(studentName, studentRollNo);
+                   newstudent = new Student(studentName, studentRollNo);
                     for (Student ItrStudent : studentArrayList) {
 
                         if (counter == position) {
 
                             counter++;
                             continue;
-                        } else if (student.getRollNo().equals(ItrStudent.getRollNo())) {
+                        } else if (newstudent.getRollNo().equals(ItrStudent.getRollNo())) {
                             etRollNo.setError(getString(R.string.error_roll_no));
                             counter = -1;
 
@@ -179,10 +194,12 @@ public class StudentActivity extends AppCompatActivity {
                     }
                     Intent returnIntent = new Intent();
                     if (counter != -1) {
-
-                        returnIntent.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
+                        Log.d("here", "onClick: in Update");
+                        dbHelper.getWritableDatabase();
+                        dbHelper.updateStudent(oldRollNo,newstudent);
+                        returnIntent.putExtra("id", studentRollNo);
                         returnIntent.putExtra(Constants.EXTRA_POSITION, position);
-                        setResult(Constants.EDIT_STUDENT_INFO, returnIntent);
+                        setResult(RESULT_OK, returnIntent);
                         finish();
                     }
                 }
@@ -195,7 +212,7 @@ public class StudentActivity extends AppCompatActivity {
      * to validate input fields
      * @return boolean true or false according to input
      */
-    private boolean validate() {
+    private boolean validate(){
 
         Validator validator= new Validator();
         if (validator.isEmpty(etName)) {
@@ -211,6 +228,11 @@ public class StudentActivity extends AppCompatActivity {
             etRollNo.setError(getString(R.string.error_rollno));
             return true;
         }
+        else if(validator.isValidRollNo(etRollNo)){
+            etRollNo.setError(getString(R.string.error_valid_roll));
+            return true;
+            }
+
         return false;
     }
 

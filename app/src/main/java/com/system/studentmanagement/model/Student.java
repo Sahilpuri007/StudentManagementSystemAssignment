@@ -11,8 +11,20 @@ import android.os.Parcelable;
  */
 
 public class Student implements Parcelable {
+    public static final String TABLE_NAME = "student";
+    public static final String COLUMN_ROLL_NUMBER = "roll_no";
+    public static final String COLUMN_NAME = "name";
+
     private String name;
     private String rollNo;
+
+    public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
+            + COLUMN_ROLL_NUMBER + " TEXT PRIMARY KEY,"
+            + COLUMN_NAME + " TEXT)";
+
+    public Student()
+    {
+    }
 
     public Student(final String studentName,final  String studentRollNo) {
         this.name = studentName;
@@ -57,5 +69,11 @@ public class Student implements Parcelable {
         return rollNo;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void setRollNo(String rollNo) {
+        this.rollNo = rollNo;
+    }
 }

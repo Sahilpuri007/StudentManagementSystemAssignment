@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import android.widget.Switch;
 
 import com.system.studentmanagement.adapter.StudentListAdapter;
 import com.system.studentmanagement.R;
+import com.system.studentmanagement.dbmanager.DatabaseHelper;
 import com.system.studentmanagement.model.Student;
 import com.system.studentmanagement.touchlistener.RecyclerTouchListener;
 import com.system.studentmanagement.util.Constants;
@@ -50,6 +52,7 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
     private StudentListAdapter studentListAdapter;
     private PopupMenu dropDownMenu;
     private Context mContext;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
         initComponents();
         buildRecyclerView();
         setAllListeners();
+
 
     }
 
@@ -84,6 +88,11 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
         dropDownMenu.getMenuInflater().inflate(R.menu.drop_down_sort_option, dropDownMenu.getMenu());
         mContext = this;
         studentListAdapter = new StudentListAdapter(studentArrayList,this);
+        databaseHelper = new DatabaseHelper(this);
+        studentArrayList.addAll(databaseHelper.getAllStudents());
+        if (studentArrayList.size() > 0) {
+            rlEmptyView.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -234,6 +243,8 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
                 .OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                databaseHelper.getWritableDatabase();
+                databaseHelper.deleteStudent(studentArrayList.get(position));
                 studentArrayList.remove(position);
                 studentListAdapter.notifyDataSetChanged();
                 if (studentArrayList.size() == 0) {
@@ -258,9 +269,8 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
 
     private void addStudent() {
         Intent intent = new Intent(ShowStudentsActivity.this, StudentActivity.class);
-        intent.putParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST, studentArrayList);
         intent.putExtra(Constants.EXTRA_OPTION, Constants.ADD_STUDENT_INFO);
-        startActivityForResult(intent, Constants.ADD_STUDENT_INFO);
+        startActivityForResult(intent,Constants.ADD_STUDENT_INFO);
     }
 
     /*
@@ -348,6 +358,8 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     studentArrayList.clear();
+                    databaseHelper.getWritableDatabase();
+                    databaseHelper.deleteAll();
                     studentListAdapter.notifyDataSetChanged();
                     rlEmptyView.setVisibility(View.VISIBLE);
                     alertDialog.cancel();
@@ -373,16 +385,21 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
      */
     protected void onActivityResult(final int requestCode,final  int resultCode, final Intent intent) {
 
-        if (studentArrayList.size() > 0) {
-            rlEmptyView.setVisibility(View.INVISIBLE);
-        }
+
         Student student;
         if (resultCode == RESULT_OK && requestCode == Constants.ADD_STUDENT_INFO) {
-            student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
+            String id =  intent.getStringExtra("id");
+            databaseHelper.getWritableDatabase();
+            Log.d("id",""+ id);
+            student=databaseHelper.getStudent(id);
             addStudentToList(student);
         }
         if (resultCode == Constants.EDIT_STUDENT_INFO) {
-            student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
+            String id =  intent.getStringExtra("id");
+            databaseHelper.getWritableDatabase();
+            Log.d("id",""+ id);
+            student=databaseHelper.getStudent(id);
+            Log.d("updated student",""+ student.getName()+ " "+ student.getName());
             addUpdatedStudentToList(student,intent);
 
 

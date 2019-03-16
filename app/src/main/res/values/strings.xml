@@ -35,4 +35,5 @@
     <string name="no">NO</string>
     <string name="sort_by_name">Sort by Name</string>
     <string name="sort_by_roll_no">Sort by Roll No.</string>
+    <string name="error_valid_roll">Enter a valid Roll No.</string>
 </resources>
