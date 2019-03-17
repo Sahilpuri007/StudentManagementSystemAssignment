@@ -19,6 +19,9 @@
         </activity>
         <activity android:name="com.system.studentmanagement.activity.ShowStudentsActivity" />
         <activity android:name="com.system.studentmanagement.activity.StudentActivity"/>
+
+        <service android:name=".backgroundhandler.BackgroundService" />
+        <service android:name=".backgroundhandler.BackgroundIntentService" />
     </application>
 
 </manifest>

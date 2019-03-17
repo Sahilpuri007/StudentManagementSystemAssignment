@@ -3,11 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@drawable/border"
     app:cardCornerRadius="@dimen/item_radius"
+    android:background="@drawable/border"
+    android:orientation="vertical"
     android:padding="@dimen/padding">
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,34 +20,36 @@
         />
 
     <Button
-        android:id="@+id/student_dialog_btnView"
+        android:id="@+id/add_dialog_btnAsync"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
         android:background="@drawable/round_button"
-        android:text="@string/view"
+        android:text="@string/async_task"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_size" />
 
     <Button
-        android:id="@+id/student_dialog_btnEdit"
+        android:id="@+id/add_dialog_btnService"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
         android:background="@drawable/round_button"
-        android:text="@string/edit"
+        android:text="@string/service"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_size" />
 
     <Button
-        android:id="@+id/student_dialog_btnDelete"
+        android:id="@+id/add_dialog_btnIntentServ"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin"
         android:background="@drawable/round_button"
-        android:text="@string/delete"
+        android:text="@string/intent_service"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_size" />
-
 
 </LinearLayout>
+
+
+

@@ -24,6 +24,9 @@ import android.widget.Switch;
 
 import com.system.studentmanagement.adapter.StudentListAdapter;
 import com.system.studentmanagement.R;
+import com.system.studentmanagement.backgroundhandler.BackgroundAsync;
+import com.system.studentmanagement.backgroundhandler.BackgroundIntentService;
+import com.system.studentmanagement.backgroundhandler.BackgroundService;
 import com.system.studentmanagement.dbmanager.DatabaseHelper;
 import com.system.studentmanagement.model.Student;
 import com.system.studentmanagement.touchlistener.RecyclerTouchListener;
@@ -32,6 +35,7 @@ import com.system.studentmanagement.util.Constants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.ForkJoinPool;
 
 /*
  * @author Sahil Puri
@@ -45,7 +49,7 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
     //Arraylist of Student Type to store Students
     private ArrayList<Student> studentArrayList = new ArrayList<Student>();
     private RecyclerView rvStudentList;
-    private Button btnAdd, btnView, btnEdit, btnDelete;
+    private Button btnAdd, btnView, btnEdit, btnDelete, btnAsync, btnService, btnIntentServ;;
     private ImageButton ibSortMenu, ibDeleteAll;
     private Switch swLayout;
     private RelativeLayout rlEmptyView;
@@ -53,6 +57,7 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
     private PopupMenu dropDownMenu;
     private Context mContext;
     private DatabaseHelper databaseHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,8 +158,9 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
      */
     private void studentDialog(final int position) {
         View mView = getLayoutInflater().inflate(R.layout.dialog_student_options, null);
+        final AlertDialog dialog = new AlertDialog.Builder(mContext).setView(mView).create();
         initAlertDialogView(mView);
-        final AlertDialog dialog = alertDialogBuilder(mView);
+
 
         btnView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,16 +197,6 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
         btnDelete = mView.findViewById(R.id.student_dialog_btnDelete);
     }
 
-    /*
-     * method alertDialogBuilder
-     * to setView and create alertDialog
-     * @param View mView
-     */
-    private AlertDialog alertDialogBuilder(final View mView) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setView(mView);
-        return builder.create();
-    }
 
     /*
      * method viewMode
@@ -243,14 +239,14 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
                 .OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                databaseHelper.getWritableDatabase();
-                databaseHelper.deleteStudent(studentArrayList.get(position));
-                studentArrayList.remove(position);
+
+                deleteHandler(studentArrayList.get(position));
+//                databaseHelper.deleteStudent(studentArrayList.get(position));
                 studentListAdapter.notifyDataSetChanged();
                 if (studentArrayList.size() == 0) {
                     rlEmptyView.setVisibility(View.VISIBLE);
                 }
-                alertDialog.cancel();
+
             }
         });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.back), new DialogInterface
@@ -261,6 +257,108 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
             }
         });
         alertDialog.show();
+    }
+
+    /**
+     * to delete student(s) from database
+     * three choices are given
+     * 1.Async
+     * 2.Service
+     * 3.Intent Service
+     * @param student
+     */
+    private void deleteHandler(final Student student) {
+        View mViewDialog = getLayoutInflater().inflate(R.layout.dialog_add_options, null);
+        final AlertDialog dialog = new AlertDialog.Builder(mContext).setView(mViewDialog).create();
+        initDialogView(mViewDialog);
+
+        btnAsync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BackgroundAsync taskAsync = new BackgroundAsync(mContext);
+                taskAsync.execute(Constants.DELETE_STUDENT_INFO,student);
+                if(student!=null)
+                {
+                    studentArrayList.remove(student);
+                    if(studentArrayList.size()==0){
+                        rlEmptyView.setVisibility(View.VISIBLE);
+                    }
+
+                }
+                else
+                {
+                    studentArrayList.clear();
+                    rlEmptyView.setVisibility(View.VISIBLE);
+                }
+                studentListAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+
+            }
+        });
+        btnService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent service = new Intent(mContext, BackgroundService.class);
+                service.putExtra(Constants.EXTRA_STUDENT_OBJECT,student);
+                service.putExtra(Constants.EXTRA_OPTION,Constants.DELETE_STUDENT_INFO);
+                startService(service);
+                if(student!=null)
+                {
+                    studentArrayList.remove(student);
+                    if(studentArrayList.size()==0){
+                        rlEmptyView.setVisibility(View.VISIBLE);
+                    }
+                }
+                else
+                {
+                    studentArrayList.clear();
+                    rlEmptyView.setVisibility(View.VISIBLE);
+                }
+                studentListAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+
+
+            }
+        });
+        btnIntentServ.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentService = new Intent(mContext, BackgroundIntentService.class);
+                intentService.putExtra(Constants.EXTRA_STUDENT_OBJECT,student);
+                intentService.putExtra(Constants.EXTRA_OPTION,Constants.DELETE_STUDENT_INFO);
+                startService(intentService);
+                if(student!=null)
+                {
+                    studentArrayList.remove(student);
+                    if(studentArrayList.size()==0){
+                        rlEmptyView.setVisibility(View.VISIBLE);
+                    }
+                }
+                else
+                {
+                    studentArrayList.clear();
+                    rlEmptyView.setVisibility(View.VISIBLE);
+
+                }
+                studentListAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+
+
+            }
+        });
+        dialog.show();
+
+    }
+
+    /*
+     * method initDialogView
+     * To initialize views of the dialog
+     * @param View mView
+     */
+    private void initDialogView(final View mView) {
+        btnAsync= mView.findViewById(R.id.add_dialog_btnAsync);
+        btnService = mView.findViewById(R.id.add_dialog_btnService);
+        btnIntentServ = mView.findViewById(R.id.add_dialog_btnIntentServ);
     }
     /*
      * method addStudent
@@ -357,11 +455,14 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
                     .OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    studentArrayList.clear();
+
+                    deleteHandler(null);
+
+                    /*studentArrayList.clear();
                     databaseHelper.getWritableDatabase();
-                    databaseHelper.deleteAll();
+                    databaseHelper.deleteAll();*/
                     studentListAdapter.notifyDataSetChanged();
-                    rlEmptyView.setVisibility(View.VISIBLE);
+
                     alertDialog.cancel();
                 }
             });
@@ -395,11 +496,10 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
             addStudentToList(student);
         }
         if (resultCode == Constants.EDIT_STUDENT_INFO) {
-            String id =  intent.getStringExtra("id");
+            String id =  intent.getStringExtra("updated");
             databaseHelper.getWritableDatabase();
-            Log.d("id",""+ id);
+            Log.d("updated",""+ id);
             student=databaseHelper.getStudent(id);
-            Log.d("updated student",""+ student.getName()+ " "+ student.getName());
             addUpdatedStudentToList(student,intent);
 
 

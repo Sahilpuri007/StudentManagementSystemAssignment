@@ -9,10 +9,10 @@
     <dimen name="splash_logo">250dp</dimen>
     <dimen name="splash_text">10dp</dimen>
     <dimen name="margin">10dp</dimen>
-    <dimen name="padding">10dp</dimen>
+    <dimen name="padding">15dp</dimen>
     <dimen name="add_image_size">150dp</dimen>
     <dimen name="item_margin">2dp</dimen>
-    <dimen name="item_radius">4dp</dimen>
+    <dimen name="item_radius">11dp</dimen>
     <dimen name="stroke">5dp</dimen>
     <dimen name="btn_radius">100dp</dimen>
 </resources>

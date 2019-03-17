@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.system.studentmanagement.model.Student;
 
-import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -24,8 +23,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d("HERE","on create");
-        db.execSQL(Student.CREATE_TABLE);
+        String CREATE_TABLE = "CREATE TABLE " + Student.TABLE_NAME + "("
+                + Student.COLUMN_ROLL_NUMBER + " TEXT PRIMARY KEY,"
+                + Student.COLUMN_NAME + " TEXT)";
+        Log.d("HERE", "on create");
+        db.execSQL(CREATE_TABLE);
     }
 
     @Override
@@ -37,48 +39,73 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void  addStudent(Student student) {
-        Log.d("HERE","in add");
+    /**
+     * Saves Student Data to Database
+     *
+     * @param student Student Object
+     */
+    public void addStudent(Student student) {
+
         ContentValues contentValues = new ContentValues();
         contentValues.put(Student.COLUMN_ROLL_NUMBER, student.getRollNo());
         contentValues.put(Student.COLUMN_NAME, student.getName());
         SQLiteDatabase db = this.getWritableDatabase();
+
         db.insert(Student.TABLE_NAME, null, contentValues);
     }
 
-    public ArrayList<Student> getAllStudents()
-    {
+    /**
+     * Get All Students from Database
+     *
+     * @return students list ArrayList
+     */
+    public ArrayList<Student> getAllStudents() {
         ArrayList<Student> studentList = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + Student.TABLE_NAME;
-
+        String[] projection = {
+                Student.COLUMN_NAME,
+                Student.COLUMN_ROLL_NUMBER
+        };
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery,null);
+        Cursor cursor = db.query(Student.TABLE_NAME, projection,
+                Student.COLUMN_ROLL_NUMBER + "=?", null,
+                null, null, null);
 
 
-            while (cursor.moveToNext()){
-                Student student = new Student();
-                student.setName(cursor.getString(cursor.getColumnIndex(Student.COLUMN_NAME)));
-                student.setRollNo(cursor.getString(cursor.getColumnIndex(Student.COLUMN_ROLL_NUMBER)));
-                studentList.add(student);
-            }
+        while (cursor.moveToNext()) {
+            Student student = new Student();
+            student.setName(cursor.getString(cursor.getColumnIndex(Student.COLUMN_NAME)));
+            student.setRollNo(cursor.getString(cursor.getColumnIndex(Student.COLUMN_ROLL_NUMBER)));
+            studentList.add(student);
+        }
 
         cursor.close();
         db.close();
         return studentList;
     }
-    public Student getStudent(String id) {
-        Log.d("get cursor",id);
-                // get readable database as we are not inserting anything
-        String selectQuery = "SELECT * FROM " + Student.TABLE_NAME + " WHERE " + Student.COLUMN_ROLL_NUMBER + "= '" + id+"'";
 
+    /**
+     * Get Student from Database with id
+     *
+     * @param id of Student
+     * @return student Student
+     */
+    public Student getStudent(String id) {
+        //Log.d("get cursor", id);
+        // get readable database as we are not inserting anything
+        String[] projection = {
+                Student.COLUMN_NAME,
+                Student.COLUMN_ROLL_NUMBER
+        };
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery,null);
+        Cursor cursor = db.query(Student.TABLE_NAME, projection,
+                Student.COLUMN_ROLL_NUMBER + "=?", new String[]{id},
+                null, null, null);
+
 
         Student student = new Student();
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
 
-            Log.d("get cursor", "getStudent: "+ cursor.getString(cursor.getColumnIndex(Student.COLUMN_ROLL_NUMBER)));
-
+            //Log.d("get cursor", "getStudent: " + cursor.getString(cursor.getColumnIndex(Student.COLUMN_ROLL_NUMBER)));
             student.setName(cursor.getString(cursor.getColumnIndex(Student.COLUMN_NAME)));
             student.setRollNo(cursor.getString(cursor.getColumnIndex(Student.COLUMN_ROLL_NUMBER)));
         }
@@ -89,31 +116,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return student;
 
     }
-    /*public int getStudentCount() {
-        String countQuery = "SELECT  * FROM " + Student.TABLE_NAME;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-
-        int count = cursor.getCount();
-        cursor.close();
-
-
-        // return count
-        return count;
-    }*/
+    /**
+     * Update Student in Database
+     *
+     * @param oldRollNo of Student
+     * @param  student new Student object
+     */
     public void updateStudent(String oldRollNo, Student student) {
-        Log.d("HERE","in update " + oldRollNo);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Student.COLUMN_ROLL_NUMBER, student.getRollNo());
         values.put(Student.COLUMN_NAME, student.getName());
-        String updateQuery = "UPDATE " + Student.TABLE_NAME + " SET " + Student.COLUMN_ROLL_NUMBER + " = " +" '"+student.getRollNo()+" ' , "+
-                Student.COLUMN_NAME + " = " +"'"+student.getName()+"'"+ " WHERE "+ Student.COLUMN_ROLL_NUMBER+ " = '" + oldRollNo+"'" ;
-
-        db.execSQL(updateQuery);
+        db.update(Student.TABLE_NAME, values, Student.COLUMN_ROLL_NUMBER + "=?", new String[]{oldRollNo});
         db.close();
     }
-
+    /**
+     * Delete Student in Database
+     *
+     * @param  student  Student object
+     */
     public void deleteStudent(Student student) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(Student.TABLE_NAME, Student.COLUMN_ROLL_NUMBER + " = ?",
@@ -121,11 +142,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.close();
     }
-
+    /**
+     * Delete all Students in Database
+     */
     public void deleteAll() {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(Student.TABLE_NAME,null,null);
+        db.delete(Student.TABLE_NAME, null, null);
         db.close();
     }
 }

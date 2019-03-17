@@ -36,4 +36,7 @@
     <string name="sort_by_name">Sort by Name</string>
     <string name="sort_by_roll_no">Sort by Roll No.</string>
     <string name="error_valid_roll">Enter a valid Roll No.</string>
+    <string name="async_task">Async Task</string>
+    <string name="service">Service</string>
+    <string name="intent_service">Intent Service</string>
 </resources>

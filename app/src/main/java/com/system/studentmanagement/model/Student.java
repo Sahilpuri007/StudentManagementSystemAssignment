@@ -18,9 +18,7 @@ public class Student implements Parcelable {
     private String name;
     private String rollNo;
 
-    public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
-            + COLUMN_ROLL_NUMBER + " TEXT PRIMARY KEY,"
-            + COLUMN_NAME + " TEXT)";
+
 
     public Student()
     {
