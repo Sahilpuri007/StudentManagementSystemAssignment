@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    android:orientation="vertical"
+    tools:context=".activity.ShowStudentsActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/rlEmptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnAdd"
+
+        >
+
+        <ImageView
+            android:id="@+id/ivNoAdded_image"
+            android:layout_width="@dimen/size_image"
+            android:layout_height="@dimen/size_image"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_add_student" />
+
+        <TextView
+            android:id="@+id/tvNoAdded"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ivNoAdded_image"
+            android:layout_margin="10dp"
+            android:text="@string/no_students_added"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/msg_size" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvStudentList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnAdd"
+        android:layout_margin="@dimen/recycler_margin"
+        android:padding="@dimen/recycler_padding"
+        android:scrollbars="vertical" />
+
+    <Button
+        android:id="@+id/btnAdd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:background="@color/colorPrimary"
+        android:text="@string/add_here"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_size" />
+
+
+</RelativeLayout>

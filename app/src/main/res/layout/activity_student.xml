@@ -16,7 +16,7 @@
             android:id="@+id/tvTitleScreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add_student_details"
+            android:text="View Student"
             android:textAlignment="center"
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/text_size"
@@ -24,59 +24,13 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+      <fragment
+          android:id="@+id/frag_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          tools:layout="@layout/fragment_student"
+          class="com.system.studentmanagement.fragment.AddStudentFragment"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin"
-            android:orientation="vertical"
-            android:padding="@dimen/padding">
-
-            <ImageView
-                android:layout_width="@dimen/add_image_size"
-                android:layout_height="@dimen/add_image_size"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/margin"
-                android:src="@drawable/ic_add_student" />
-
-            <EditText
-                android:id="@+id/etName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:hint="@string/add_name"
-                android:inputType="textCapWords|textPersonName"
-                android:maxLength="30"
-                android:textColor="@color/colorBlack" />
-
-            <EditText
-                android:id="@+id/etRollNo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:hint="@string/add_roll_no"
-                android:inputType="number"
-                android:maxLength="6"
-                android:textColor="@color/colorBlack" />
-
-            <Button
-                android:id="@+id/btnAddStudent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin"
-                android:background="@drawable/round_button"
-                android:gravity="center"
-                android:padding="@dimen/padding"
-                android:text="@string/add_student"
-                android:textColor="@color/colorWhite"
-                android:textSize="@dimen/text_size" />
-        </LinearLayout>
-
-    </ScrollView>
 
 
 </LinearLayout>
