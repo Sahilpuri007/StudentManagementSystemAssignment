@@ -5,7 +5,7 @@
     <string name="add_student_details">Add Student Details</string>
     <string name="add_name">Name</string>
     <string name="add_roll_no">Roll.No.</string>
-    <string name="add_student">Add Student</string>
+    <string name="add_student">Save</string>
     <string name="no_students_added">No Students Added Till Yet!!!</string>
     <string name="layout_switch">Layout Switch</string>
     <string name="update_title">Update Student Details</string>

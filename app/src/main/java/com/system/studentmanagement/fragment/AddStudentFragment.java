@@ -2,6 +2,7 @@ package com.system.studentmanagement.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
@@ -24,16 +25,18 @@ import com.system.studentmanagement.backgroundhandler.BackgroundAsync;
 import com.system.studentmanagement.backgroundhandler.BackgroundIntentService;
 import com.system.studentmanagement.backgroundhandler.BackgroundService;
 import com.system.studentmanagement.dbmanager.DatabaseHelper;
+import com.system.studentmanagement.listener.OnFragmentInteractionListener;
 import com.system.studentmanagement.model.Student;
 import com.system.studentmanagement.util.Constants;
 import com.system.studentmanagement.util.Validator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AddStudentFragment extends Fragment {
 
     private EditText etName, etRollNo;
-    private TextView tvTitle;
+    private OnFragmentInteractionListener mListener;
     private Button btnAddStudent, btnAsync, btnService, btnIntentServ;
     private ArrayList<Student> studentArrayList = new ArrayList<>();
     private DatabaseHelper dbHelper;
@@ -41,25 +44,58 @@ public class AddStudentFragment extends Fragment {
     private BackgroundAsync taskAsync;
 
 
-    public AddStudentFragment() {
 
+    public AddStudentFragment() {
+            // Required empty public constructor
     }
+
+    public static AddStudentFragment newInstance() {
+
+        return new AddStudentFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
-        StrictMode.setThreadPolicy(policy);
+
         View view = inflater.inflate(R.layout.fragment_student, container, false);
 
-
         initComponents(view);
-        manageIntent();
-        addMode();
+
+        clearFields();
+        refreshStudentList();
+
         return view;
     }
 
+    private void refreshStudentList() {
 
+        List<Student> students = mListener.onRefreshStudentList();
+        studentArrayList.clear();
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = new Student(students.get(i).getName(), students.get(i).getRollNo());
+            studentArrayList.add(student);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        this.mContext = context;
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     /*
      * method initComponents
@@ -69,32 +105,32 @@ public class AddStudentFragment extends Fragment {
         etName = view.findViewById(R.id.etName);
         etRollNo = view.findViewById(R.id.etRollNo);
         btnAddStudent = view.findViewById(R.id.btnAddStudent);
-        //tvTitle = view.findViewById(R.id.tvTitleScreen);
-        mContext = getActivity();
-        dbHelper = new DatabaseHelper(getActivity());
+        dbHelper = new DatabaseHelper(mContext);
         studentArrayList.addAll(dbHelper.getAllStudents());
         taskAsync = new BackgroundAsync(mContext);
 
     }
+    private void clearFields() {
+        etName.getText().clear();
+        etRollNo.getText().clear();
+    }
 
     /*
-     * method manageIntent
+     * method manageMode
      * To check intent and open activity in desired mode i.e. ADD , VIEW or EDIT
      */
-    private void manageIntent() {
-        Intent intent = getActivity().getIntent();
-        //studentArrayList = intent.getParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST);
-        final Student student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
-        if (intent.getIntExtra(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.VIEW_STUDENT_INFO) {
-            viewStudent(student);
-        }
-       /* } else if (intent.getIntExtra(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.EDIT_STUDENT_INFO) {
-            int position = intent.getIntExtra(Constants.EXTRA_POSITION, -1);
-            updateMode(student, position, studentArrayList);
-        } else {
-            // Log.d("here ",studentArrayList.toString());
+    public void manageMode(Bundle bundle) {
 
-        }*/
+
+        //studentArrayList = bundle.getParcelableArrayList(Constants.EXTRA_ARRAY_LIST);
+        final Student student = bundle.getParcelable(Constants.EXTRA_STUDENT_OBJECT);
+        if (bundle.getInt(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.ADD_STUDENT_INFO) {
+            addMode();
+        }
+         else if (bundle.getInt(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.EDIT_STUDENT_INFO) {
+            int position = bundle.getInt(Constants.EXTRA_POSITION, -1);
+            updateMode(student, position, studentArrayList);
+        }
 
     }
 
@@ -127,13 +163,12 @@ public class AddStudentFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                //((ShowStudentsActivity)mContext).changeTab();
                 int counter = 0;
                 String studentName = etName.getText().toString().trim();
                 String studentRollNo = etRollNo.getText().toString();
                 Student student = new Student(studentName, studentRollNo);
 
-                if (validate()) {
+                if (!validate()) {
                     Log.d("Validate", "Wrong");
 
                 } else {
@@ -146,18 +181,16 @@ public class AddStudentFragment extends Fragment {
                         }
                     }
 
-                    Intent returnIntent = new Intent();
+
                     if (counter != -1) {
                         etName.setEnabled(false);
                         etRollNo.setEnabled(false);
                         openOptionsDialog(Constants.ADD_STUDENT_INFO, student, null);
                         etName.setEnabled(true);
                         etRollNo.setEnabled(true);
-                        //returnIntent.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
-                        dbHelper.getWritableDatabase();
-                        dbHelper.addStudent(student);
-                        returnIntent.putExtra("id", studentRollNo);
-                        //setResult(RESULT_OK, returnIntent);
+//                        dbHelper.getWritableDatabase();
+//                        dbHelper.addStudent(student);
+
 
                     }
                 }
@@ -178,8 +211,7 @@ public class AddStudentFragment extends Fragment {
     private void updateMode(final Student student, final int position,
                             final ArrayList<Student> studentArrayList) {
         dbHelper = new DatabaseHelper(mContext);
-        tvTitle.setText(getString(R.string.update_title));
-        btnAddStudent.setText(getString(R.string.update));
+        //tvTitle.setText(getString(R.string.update_title));
         final String oldRollNo = student.getRollNo();
         Log.d("update", "updateMode: old rolno " + oldRollNo);
         etRollNo.setText(student.getRollNo());
@@ -190,12 +222,12 @@ public class AddStudentFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-
+                Log.d("here", "onClick: update");
                 int counter = 0;
                 String studentName = etName.getText().toString().trim();
                 String studentRollNo = etRollNo.getText().toString();
                 Student newstudent;
-                if (validate()) {
+                if (!validate()) {
 
                     newstudent = new Student(studentName, studentRollNo);
                     Log.d("update", "updateMode: new " + newstudent.getName() + " " + newstudent.getRollNo());
@@ -214,7 +246,7 @@ public class AddStudentFragment extends Fragment {
                         counter++;
                     }
 
-                    Intent returnIntent = new Intent();
+
                     if (counter != -1) {
                         Log.d("here", "onClick;update");
                         etName.setEnabled(false);
@@ -225,13 +257,11 @@ public class AddStudentFragment extends Fragment {
                         /*dbHelper.getWritableDatabase();
                         dbHelper.updateStudent(oldRollNo,newstudent);
                         Log.d("here", "onClick: in Update " + studentRollNo);*/
-                        returnIntent.putExtra("updated", studentRollNo);
-                        returnIntent.putExtra(Constants.EXTRA_POSITION, position);
+                        //returnIntent.putExtra("updated", studentRollNo);
+                        //returnIntent.putExtra(Constants.EXTRA_POSITION, position);
                         //setResult(Constants.EDIT_STUDENT_INFO, returnIntent);
 
                     }
-                } else {
-
                 }
             }
         });
@@ -282,6 +312,7 @@ public class AddStudentFragment extends Fragment {
     private void taskAsync(int option, Student student, String oldRollNo) {
 
         taskAsync.execute(option, student, oldRollNo);
+        mListener.onChangeTab();
         //finish();
     }
 
@@ -297,7 +328,8 @@ public class AddStudentFragment extends Fragment {
         service.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
         service.putExtra(Constants.EXTRA_OPTION, option);
         service.putExtra(Constants.EXTRA_OLD_ROLL_NO, oldRollNo);
-        //startService(service);
+        mContext.startService(service);
+        mListener.onChangeTab();
         //finish();
     }
 
@@ -313,7 +345,8 @@ public class AddStudentFragment extends Fragment {
         intentService.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
         intentService.putExtra(Constants.EXTRA_OPTION, option);
         intentService.putExtra(Constants.EXTRA_OLD_ROLL_NO, oldRollNo);
-        //startService(intentService);
+        mContext.startService(intentService);
+        mListener.onChangeTab();
         //finish();
 
     }
@@ -354,6 +387,7 @@ public class AddStudentFragment extends Fragment {
 
         return true;
     }
+
 
 
 

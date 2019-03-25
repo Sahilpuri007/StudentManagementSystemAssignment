@@ -1,4 +1,4 @@
-package com.system.studentmanagement.touchlistener;
+package com.system.studentmanagement.listener;
 
 /*
  * Interface RecyclerTouchListener

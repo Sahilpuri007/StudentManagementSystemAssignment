@@ -1,50 +1,28 @@
 package com.system.studentmanagement.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 
 import android.graphics.Color;
-import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
 
-import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 
-import com.system.studentmanagement.adapter.StudentListAdapter;
 import com.system.studentmanagement.R;
 import com.system.studentmanagement.adapter.ViewPagerAdapter;
-import com.system.studentmanagement.backgroundhandler.BackgroundAsync;
-import com.system.studentmanagement.backgroundhandler.BackgroundIntentService;
-import com.system.studentmanagement.backgroundhandler.BackgroundService;
 import com.system.studentmanagement.dbmanager.DatabaseHelper;
 import com.system.studentmanagement.fragment.AddStudentFragment;
 import com.system.studentmanagement.fragment.ShowStudentsFragment;
+import com.system.studentmanagement.listener.OnFragmentInteractionListener;
 import com.system.studentmanagement.model.Student;
-import com.system.studentmanagement.touchlistener.RecyclerTouchListener;
-import com.system.studentmanagement.util.Constants;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.concurrent.ForkJoinPool;
+import java.util.List;
 
 /*
  * @author Sahil Puri
@@ -53,15 +31,16 @@ import java.util.concurrent.ForkJoinPool;
  * It contains A recycler view , a add button , and various other options for user
  */
 
-public class ShowStudentsActivity extends AppCompatActivity  {
+public class ShowStudentsActivity extends AppCompatActivity implements OnFragmentInteractionListener {
 
 
-    public ArrayList<Student> studentArrayList = new ArrayList<>();
+    private ArrayList<Student> studentArrayList;
+    private RelativeLayout rlEmptyView;
     private ViewPager viewPager;
-    private TabLayout tabLayout;
-    private ImageButton ibSortMenu, ibDeleteAll;
-    private Switch swLayout;
-    private PopupMenu dropDownMenu;
+    private DatabaseHelper dbHelper;
+    private Toolbar toolbar;
+
+
 
     @SuppressLint("ResourceType")
     @Override
@@ -69,13 +48,28 @@ public class ShowStudentsActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_students);
 
-        swLayout = findViewById(R.id.swLayout);
-        ibSortMenu = findViewById(R.id.ibSort);
-        ibDeleteAll = findViewById(R.id.ibDeleteAll);
-        dropDownMenu = new PopupMenu(this, ibSortMenu);
-        dropDownMenu.getMenuInflater().inflate(R.menu.drop_down_sort_option, dropDownMenu.getMenu());
+        dbHelper = new DatabaseHelper(this);
+
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        rlEmptyView = findViewById(R.id.rlEmptyView);
+
         viewPager = findViewById(R.id.vpDisplay);
-        tabLayout = findViewById(R.id.tlShow);
+
+        TabLayout tabLayout = findViewById(R.id.tlShow);
+
+        setupViewPager(viewPager);
+
+
+        tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.setTabTextColors(Color.parseColor(getString(R.color.colorBlack)),Color.parseColor(getString(R.color.colorWhite)));
+
+        studentArrayList = new ArrayList<>();
+
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -103,41 +97,6 @@ public class ShowStudentsActivity extends AppCompatActivity  {
             }
         });
 
-
-        setupViewPager(viewPager);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabTextColors(Color.parseColor(getString(R.color.colorBlack)),Color.parseColor(getString(R.color.colorWhite)));
-
-        dropDownMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //return menuManger(item.getItemId());
-                return false;
-            }
-        });
-        ibSortMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dropDownMenu.show();
-            }
-        });
-        ibDeleteAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               //deleteAllDialog();
-            }
-        });
-
-        swLayout.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // rvStudentList.setLayoutManager(switchManager(isChecked));
-
-            }
-        });
-
-
-
     }
     private void setupViewPager(ViewPager viewPager) {
 
@@ -157,11 +116,51 @@ public class ShowStudentsActivity extends AppCompatActivity  {
         if(viewPager.getCurrentItem()==0) {
             viewPager.setCurrentItem(1);
         }
+        else if(viewPager.getCurrentItem()==1) {
+            viewPager.setCurrentItem(0);
+
+        }
+    }
+
+    @Override
+    public boolean onStudentDelete(Student student) {
+        return false;
+    }
+
+    @Override
+    public List<Student> onRefreshStudentList() {
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        List<Student> students = databaseHelper.getAllStudents();
+        return students;
+    }
+
+    @Override
+    public void onEditData(Bundle bundle) {
+        String tag = "android:switcher:" + R.id.vpDisplay + ":" + 1;
+        AddStudentFragment addStudentFragment = (AddStudentFragment) getSupportFragmentManager().findFragmentByTag(tag);
+        if (addStudentFragment != null) {
+            addStudentFragment.manageMode(bundle);
+        }
+
+    }
+
+    @Override
+    public void onAddData(Bundle bundle) {
+        String tag = "android:switcher:" + R.id.vpDisplay + ":" + 1;
+        AddStudentFragment addStudentFragment = (AddStudentFragment) getSupportFragmentManager().findFragmentByTag(tag);
+        if (addStudentFragment != null) {
+            addStudentFragment.manageMode(bundle);
+        }
     }
 
 
-    public void addDataToShow() {
-
-        getSupportFragmentManager().findFragmentByTag("Add Student");
+    @Override
+    public void onChangeTab() {
+        if (viewPager.getCurrentItem() == 0) {
+            viewPager.setCurrentItem(1);
+        } else {
+            viewPager.setCurrentItem(0);
+        }
     }
 }
+

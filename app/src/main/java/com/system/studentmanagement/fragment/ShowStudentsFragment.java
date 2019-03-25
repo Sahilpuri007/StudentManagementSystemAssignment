@@ -8,12 +8,10 @@ import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -34,13 +32,15 @@ import com.system.studentmanagement.backgroundhandler.BackgroundAsync;
 import com.system.studentmanagement.backgroundhandler.BackgroundIntentService;
 import com.system.studentmanagement.backgroundhandler.BackgroundService;
 import com.system.studentmanagement.dbmanager.DatabaseHelper;
+import com.system.studentmanagement.listener.OnFragmentInteractionListener;
 import com.system.studentmanagement.model.Student;
-import com.system.studentmanagement.touchlistener.RecyclerTouchListener;
+import com.system.studentmanagement.listener.RecyclerTouchListener;
 import com.system.studentmanagement.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -52,15 +52,29 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
     private RecyclerView rvStudentList;
     private Button btnAdd, btnView, btnEdit, btnDelete, btnAsync, btnService, btnIntentServ;
     private RelativeLayout rlEmptyView;
+    private OnFragmentInteractionListener mListener;
     private StudentListAdapter studentListAdapter;
     private Context mContext;
     private DatabaseHelper databaseHelper;
-
+    private ImageButton ibSortMenu, ibDeleteAll;
+    private Switch swLayout;
+    private PopupMenu dropDownMenu;
 
 
     public ShowStudentsFragment() {
 
+    }
 
+    private static ShowStudentsFragment newInstance() {
+        ShowStudentsFragment fragment = new ShowStudentsFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -70,14 +84,30 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         StrictMode.setThreadPolicy(policy);
         View view = inflater.inflate(R.layout.fragment_show_students, container, false);
 
-        studentArrayList.add(new Student("test","007"));
         initComponents(view);
         buildRecyclerView();
         setAllListeners();
 
-
-
+        refreshStudentList();
         return view;
+
+    }
+
+    public void refreshStudentList() {
+        List<Student> students = mListener.onRefreshStudentList();
+        studentArrayList.clear();
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = new Student(students.get(i).getName(), students.get(i).getRollNo());
+            studentArrayList.add(student);
+        }
+        if (studentArrayList.size() == 0) {
+            rlEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            rlEmptyView.setVisibility(View.GONE);
+        }
+
+        studentListAdapter.notifyDataSetChanged();
 
     }
 
@@ -85,8 +115,19 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
 
     @Override
@@ -103,14 +144,20 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
      */
     private void initComponents(View view) {
         btnAdd = view.findViewById(R.id.btnAdd);
+        swLayout = getActivity().findViewById(R.id.swLayout);
         rlEmptyView = view.findViewById(R.id.rlEmptyView);
+        ibSortMenu = getActivity().findViewById(R.id.ibSort);
+        ibDeleteAll = getActivity().findViewById(R.id.ibDeleteAll);
         rvStudentList = view.findViewById(R.id.rvStudentList);
-        studentListAdapter = new StudentListAdapter(studentArrayList,this);
-        databaseHelper = new DatabaseHelper(getActivity());
+        dropDownMenu = new PopupMenu(getActivity(), ibSortMenu);
+        dropDownMenu.getMenuInflater().inflate(R.menu.drop_down_sort_option, dropDownMenu.getMenu());
+        studentListAdapter = new StudentListAdapter(studentArrayList, this);
+        databaseHelper = new DatabaseHelper(mContext);
         studentArrayList.addAll(databaseHelper.getAllStudents());
         if (studentArrayList.size() > 0) {
             rlEmptyView.setVisibility(View.INVISIBLE);
         }
+
     }
 
 
@@ -125,6 +172,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
 
 
 
+
     /*
      * method setAllListeners
      * To set listeners to various components
@@ -135,13 +183,36 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addStudent();
+                mListener.onChangeTab();
 
-
-                ((ShowStudentsActivity)mContext).changeTab();
-                //addStudent();
             }
         });
+        swLayout.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                rvStudentList.setLayoutManager(switchManager(isChecked));
 
+            }
+        });
+        dropDownMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return menuManger(item.getItemId());
+            }
+        });
+        ibSortMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dropDownMenu.show();
+            }
+        });
+        ibDeleteAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteAllDialog();
+            }
+        });
 
     }
 
@@ -198,9 +269,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
      */
     private void viewMode(final int position) {
         Intent intent = new Intent(mContext, StudentActivity.class);
-        intent.putParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST, studentArrayList);
         intent.putExtra(Constants.EXTRA_STUDENT_OBJECT, studentArrayList.get(position));
-        intent.putExtra(Constants.EXTRA_OPTION, Constants.VIEW_STUDENT_INFO);
         startActivity(intent);
     }
 
@@ -211,15 +280,13 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
      */
     private void editMode(final int position) {
 
-        ((ShowStudentsActivity)mContext).addDataToShow();
-        ((ShowStudentsActivity)mContext).changeTab();
-
-      /*  Intent intent = new Intent(mContext, StudentActivity.class);
-        intent.putParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST, studentArrayList);
-        intent.putExtra(Constants.EXTRA_STUDENT_OBJECT, studentArrayList.get(position));
-        intent.putExtra(Constants.EXTRA_POSITION, position);
-        intent.putExtra(Constants.EXTRA_OPTION, Constants.EDIT_STUDENT_INFO);
-        startActivityForResult(intent, Constants.EDIT_STUDENT_INFO);*/
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(Constants.EXTRA_ARRAY_LIST, studentArrayList);
+        bundle.putParcelable(Constants.EXTRA_STUDENT_OBJECT, studentArrayList.get(position));
+        bundle.putInt(Constants.EXTRA_POSITION, position);
+        bundle.putInt(Constants.EXTRA_OPTION, Constants.EDIT_STUDENT_INFO);
+        mListener.onEditData(bundle);
+        mListener.onChangeTab();
     }
 
     /*
@@ -238,7 +305,8 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
             public void onClick(DialogInterface dialog, int which) {
 
                 deleteHandler(studentArrayList.get(position));
-//                databaseHelper.deleteStudent(studentArrayList.get(position));
+
+//              databaseHelper.deleteStudent(studentArrayList.get(position));
                 studentListAdapter.notifyDataSetChanged();
                 if (studentArrayList.size() == 0) {
                     rlEmptyView.setVisibility(View.VISIBLE);
@@ -259,7 +327,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
     @Override
     public void onPause() {
         super.onPause();
-    Log.d("asasasasa","paause");
+        Log.d("asasasasa", "paause");
     }
 
     /**
@@ -268,10 +336,9 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
      * 1.Async
      * 2.Service
      * 3.Intent Service
+     *
      * @param student
      */
-
-
 
 
     private void deleteHandler(final Student student) {
@@ -283,20 +350,18 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
             @Override
             public void onClick(View v) {
                 BackgroundAsync taskAsync = new BackgroundAsync(mContext);
-                taskAsync.execute(Constants.DELETE_STUDENT_INFO,student);
-                if(student!=null)
-                {
+                taskAsync.execute(Constants.DELETE_STUDENT_INFO, student);
+                if (student != null) {
                     studentArrayList.remove(student);
-                    if(studentArrayList.size()==0){
+                    if (studentArrayList.size() == 0) {
                         rlEmptyView.setVisibility(View.VISIBLE);
                     }
 
-                }
-                else
-                {
+                } else {
                     studentArrayList.clear();
                     rlEmptyView.setVisibility(View.VISIBLE);
                 }
+                refreshStudentList();
                 studentListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
 
@@ -306,21 +371,19 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
             @Override
             public void onClick(View v) {
                 Intent service = new Intent(mContext, BackgroundService.class);
-                service.putExtra(Constants.EXTRA_STUDENT_OBJECT,student);
-                service.putExtra(Constants.EXTRA_OPTION,Constants.DELETE_STUDENT_INFO);
+                service.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
+                service.putExtra(Constants.EXTRA_OPTION, Constants.DELETE_STUDENT_INFO);
                 mContext.startService(service);
-                if(student!=null)
-                {
+                if (student != null) {
                     studentArrayList.remove(student);
-                    if(studentArrayList.size()==0){
+                    if (studentArrayList.size() == 0) {
                         rlEmptyView.setVisibility(View.VISIBLE);
                     }
-                }
-                else
-                {
+                } else {
                     studentArrayList.clear();
                     rlEmptyView.setVisibility(View.VISIBLE);
                 }
+                refreshStudentList();
                 studentListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
 
@@ -331,28 +394,27 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
             @Override
             public void onClick(View v) {
                 Intent intentService = new Intent(mContext, BackgroundIntentService.class);
-                intentService.putExtra(Constants.EXTRA_STUDENT_OBJECT,student);
-                intentService.putExtra(Constants.EXTRA_OPTION,Constants.DELETE_STUDENT_INFO);
+                intentService.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
+                intentService.putExtra(Constants.EXTRA_OPTION, Constants.DELETE_STUDENT_INFO);
                 mContext.startService(intentService);
-                if(student!=null)
-                {
+                if (student != null) {
                     studentArrayList.remove(student);
-                    if(studentArrayList.size()==0){
+                    if (studentArrayList.size() == 0) {
                         rlEmptyView.setVisibility(View.VISIBLE);
                     }
-                }
-                else
-                {
+                } else {
                     studentArrayList.clear();
                     rlEmptyView.setVisibility(View.VISIBLE);
 
                 }
+                refreshStudentList();
                 studentListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
 
 
             }
         });
+
         dialog.show();
 
     }
@@ -363,20 +425,11 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
      * @param View mView
      */
     private void initDialogView(final View mView) {
-        btnAsync= mView.findViewById(R.id.add_dialog_btnAsync);
+        btnAsync = mView.findViewById(R.id.add_dialog_btnAsync);
         btnService = mView.findViewById(R.id.add_dialog_btnService);
         btnIntentServ = mView.findViewById(R.id.add_dialog_btnIntentServ);
     }
-    /*
-     * method addStudent
-     * to open StudentActivity in add mode
-     */
 
-    private void addStudent() {
-        Intent intent = new Intent(mContext, StudentActivity.class);
-        intent.putExtra(Constants.EXTRA_OPTION, Constants.ADD_STUDENT_INFO);
-        startActivityForResult(intent,Constants.ADD_STUDENT_INFO);
-    }
 
     /*
      * method switchManager
@@ -386,9 +439,9 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
      */
     private RecyclerView.LayoutManager switchManager(final boolean isChecked) {
         if (isChecked) {
-            return  new GridLayoutManager(mContext, 2);
+            return new GridLayoutManager(mContext, 2);
         } else {
-            return  new LinearLayoutManager(mContext);
+            return new LinearLayoutManager(mContext);
         }
     }
 
@@ -410,6 +463,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
                 return false;
         }
     }
+
     /*
      * method sortByName
      * To sort rvStudentList items by Student Name
@@ -424,6 +478,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         studentListAdapter.notifyDataSetChanged();
 
     }
+
     /*
      * method sortByRollNo
      * To sort rvStudentList items by Student Roll No
@@ -438,6 +493,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         });
         studentListAdapter.notifyDataSetChanged();
     }
+
     /*
      * method deleteAllDialog
      * To delete all items in Recycler View
@@ -446,7 +502,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         final AlertDialog alertDialog = new AlertDialog.Builder(mContext)
                 .create();
         alertDialog.setTitle(getString(R.string.dialog_title));
-        if(studentArrayList.size()==0){
+        if (studentArrayList.size() == 0) {
             alertDialog.setMessage(getString(R.string.dialog_empty_msg));
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.ok), new DialogInterface
                     .OnClickListener() {
@@ -455,8 +511,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
                     alertDialog.cancel();
                 }
             });
-        }
-        else {
+        } else {
             alertDialog.setMessage(getString(R.string.dialog_msg));
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.yes), new DialogInterface
                     .OnClickListener() {
@@ -468,6 +523,7 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
                     /*studentArrayList.clear();
                     databaseHelper.getWritableDatabase();
                     databaseHelper.deleteAll();*/
+                    refreshStudentList();
                     studentListAdapter.notifyDataSetChanged();
 
                     alertDialog.cancel();
@@ -483,39 +539,50 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         }
         alertDialog.show();
     }
+    /*
+     * method addStudent
+     * to open StudentActivity in add mode
+     */
+
+    private void addStudent() {
+        final Bundle bundle = new Bundle();
+        bundle.putInt(Constants.EXTRA_OPTION, Constants.ADD_STUDENT_INFO);
+        mListener.onAddData(bundle);
+    }
 
     /**
      * method onActivityResult
      * To delete all items in Recycler View
-     * @param  requestCode
-     * @param  resultCode
-     * @param  intent
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param intent
      */
-    public void onActivityResult(final int requestCode,final  int resultCode, final Intent intent) {
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
 
 
         Student student;
         if (resultCode == RESULT_OK && requestCode == Constants.ADD_STUDENT_INFO) {
-            String id =  intent.getStringExtra("id");
+            String id = intent.getStringExtra("id");
             databaseHelper.getWritableDatabase();
-            Log.d("id",""+ id);
-            student=databaseHelper.getStudent(id);
+            Log.d("id", "" + id);
+            student = databaseHelper.getStudent(id);
             addStudentToList(student);
         }
         if (resultCode == Constants.EDIT_STUDENT_INFO) {
-            String id =  intent.getStringExtra("updated");
+            String id = intent.getStringExtra("updated");
             databaseHelper.getWritableDatabase();
-            Log.d("updated",""+ id);
-            student=databaseHelper.getStudent(id);
-            addUpdatedStudentToList(student,intent);
+            Log.d("updated", "" + id);
+            student = databaseHelper.getStudent(id);
+            addUpdatedStudentToList(student, intent);
 
 
         }
     }
 
     /**
-     *  method addStudentToList
-     *  to add new Student to array list
+     * method addStudentToList
+     * to add new Student to array list
      *
      * @param student
      */
@@ -524,11 +591,12 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         studentListAdapter.notifyDataSetChanged();
         rlEmptyView.setVisibility(View.INVISIBLE);
     }
+
     /*
      * method addUpdatedStudentToList
      * to  add updated Student to array list
      */
-    private void addUpdatedStudentToList(final Student student,final Intent intent) {
+    private void addUpdatedStudentToList(final Student student, final Intent intent) {
         int position = intent.getIntExtra(Constants.EXTRA_POSITION, -1);
         studentArrayList.remove(position);
         studentArrayList.add(position, student);

@@ -1,11 +1,14 @@
 package com.system.studentmanagement.adapter;
 
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
@@ -18,7 +21,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return mFragmentList.get(position);
+      return  mFragmentList.get(position);
     }
 
     @Override
@@ -26,15 +29,20 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         return mFragmentList.size();
     }
 
-    public void addFragment(Fragment fragment, String title) {
-        mFragmentList.add(fragment);
-        mFragmentTitleList.add(title);
-    }
-
     @Override
     public CharSequence getPageTitle(int position) {
         return mFragmentTitleList.get(position);
     }
 
+
+    public void addFragment(Fragment fragment, String title) {
+        mFragmentList.add(fragment);
+        mFragmentTitleList.add(title);
+    }
+
+    public void replaceFragment(Fragment fragment,int position){
+        mFragmentList.remove(position);
+        mFragmentList.add(position,fragment);
+    }
 
 }

@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.system.studentmanagement.R;
 import com.system.studentmanagement.model.Student;
-import com.system.studentmanagement.touchlistener.RecyclerTouchListener;
+import com.system.studentmanagement.listener.RecyclerTouchListener;
 
 import java.util.ArrayList;
 

@@ -24,13 +24,15 @@
 
     </android.support.v7.widget.Toolbar>
 
-      <fragment
-          android:id="@+id/frag_view"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          tools:layout="@layout/fragment_student"
-          class="com.system.studentmanagement.fragment.AddStudentFragment"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/fragment_editor"
+        android:padding="@dimen/padding"
+        >
 
+    </LinearLayout>
 
 
 </LinearLayout>
