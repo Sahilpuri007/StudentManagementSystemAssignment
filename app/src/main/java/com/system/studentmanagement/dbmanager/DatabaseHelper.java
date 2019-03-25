@@ -67,7 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         };
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(Student.TABLE_NAME, projection,
-                Student.COLUMN_ROLL_NUMBER + "=?", null,
+                null, null,
                 null, null, null);
 
 
