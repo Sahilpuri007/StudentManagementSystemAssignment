@@ -2,25 +2,19 @@ package com.system.studentmanagement.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.system.studentmanagement.R;
-import com.system.studentmanagement.activity.ShowStudentsActivity;
 import com.system.studentmanagement.backgroundhandler.BackgroundAsync;
 import com.system.studentmanagement.backgroundhandler.BackgroundIntentService;
 import com.system.studentmanagement.backgroundhandler.BackgroundService;
@@ -31,7 +25,6 @@ import com.system.studentmanagement.util.Constants;
 import com.system.studentmanagement.util.Validator;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class AddStudentFragment extends Fragment {
 
@@ -39,14 +32,11 @@ public class AddStudentFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private Button btnAddStudent, btnAsync, btnService, btnIntentServ;
     private ArrayList<Student> studentArrayList = new ArrayList<>();
-    private DatabaseHelper dbHelper;
     private Context mContext;
-    private BackgroundAsync taskAsync;
-
 
 
     public AddStudentFragment() {
-            // Required empty public constructor
+        // Required empty public constructor
     }
 
     public static AddStudentFragment newInstance() {
@@ -69,20 +59,8 @@ public class AddStudentFragment extends Fragment {
         initComponents(view);
 
         clearFields();
-        refreshStudentList();
 
         return view;
-    }
-
-    private void refreshStudentList() {
-
-        List<Student> students = mListener.onRefreshStudentList();
-        studentArrayList.clear();
-
-        for (int i = 0; i < students.size(); i++) {
-            Student student = new Student(students.get(i).getName(), students.get(i).getRollNo());
-            studentArrayList.add(student);
-        }
     }
 
     @Override
@@ -97,23 +75,23 @@ public class AddStudentFragment extends Fragment {
         }
     }
 
-    /*
-     * method initComponents
-     * To Initialize all views
+    /**
+     * method refreshStudentList to refresh list
      */
-    private void initComponents(View view) {
-        etName = view.findViewById(R.id.etName);
-        etRollNo = view.findViewById(R.id.etRollNo);
-        btnAddStudent = view.findViewById(R.id.btnAddStudent);
-        dbHelper = new DatabaseHelper(mContext);
-        studentArrayList.addAll(dbHelper.getAllStudents());
-        taskAsync = new BackgroundAsync(mContext);
+    public void refreshStudentList() {
+
+        studentArrayList = mListener.onRefreshStudentList();
 
     }
-    private void clearFields() {
+
+    /**
+     * method clearFields to clear fields
+     */
+    public void clearFields() {
         etName.getText().clear();
         etRollNo.getText().clear();
     }
+
 
     /*
      * method manageMode
@@ -126,8 +104,7 @@ public class AddStudentFragment extends Fragment {
         final Student student = bundle.getParcelable(Constants.EXTRA_STUDENT_OBJECT);
         if (bundle.getInt(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.ADD_STUDENT_INFO) {
             addMode();
-        }
-         else if (bundle.getInt(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.EDIT_STUDENT_INFO) {
+        } else if (bundle.getInt(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.EDIT_STUDENT_INFO) {
             int position = bundle.getInt(Constants.EXTRA_POSITION, -1);
             updateMode(student, position, studentArrayList);
         }
@@ -148,7 +125,21 @@ public class AddStudentFragment extends Fragment {
         etName.setText(student.getName());
         etRollNo.setText(student.getRollNo());
         btnAddStudent.setVisibility(View.INVISIBLE);
-       // tvTitle.setText(getString(R.string.student_details));
+        // tvTitle.setText(getString(R.string.student_details));
+    }
+
+    /**
+     *  method initComponents
+     *  To Initialize all views
+     * @param view view of fragment
+     */
+    private void initComponents(View view) {
+        etName = view.findViewById(R.id.etName);
+        etRollNo = view.findViewById(R.id.etRollNo);
+        btnAddStudent = view.findViewById(R.id.btnAddStudent);
+        studentArrayList = mListener.onRefreshStudentList();
+
+
     }
 
 
@@ -157,7 +148,6 @@ public class AddStudentFragment extends Fragment {
      * to add new Student
      */
     private void addMode() {
-        dbHelper = new DatabaseHelper(mContext);
         etName.requestFocus();
         btnAddStudent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,6 +162,7 @@ public class AddStudentFragment extends Fragment {
                     Log.d("Validate", "Wrong");
 
                 } else {
+                    Log.d("here", "onClick: " + studentArrayList.size());
                     if (!(studentArrayList.size() == 0)) {
                         for (Student ItrStudent : studentArrayList) {
                             if (student.getRollNo().equals(ItrStudent.getRollNo())) {
@@ -185,12 +176,9 @@ public class AddStudentFragment extends Fragment {
                     if (counter != -1) {
                         etName.setEnabled(false);
                         etRollNo.setEnabled(false);
-                        openOptionsDialog(Constants.ADD_STUDENT_INFO, student, null);
+                        openOptionsDialog(Constants.ADD_STUDENT_INFO, student, null, -1);
                         etName.setEnabled(true);
                         etRollNo.setEnabled(true);
-//                        dbHelper.getWritableDatabase();
-//                        dbHelper.addStudent(student);
-
 
                     }
                 }
@@ -210,8 +198,6 @@ public class AddStudentFragment extends Fragment {
      */
     private void updateMode(final Student student, final int position,
                             final ArrayList<Student> studentArrayList) {
-        dbHelper = new DatabaseHelper(mContext);
-        //tvTitle.setText(getString(R.string.update_title));
         final String oldRollNo = student.getRollNo();
         Log.d("update", "updateMode: old rolno " + oldRollNo);
         etRollNo.setText(student.getRollNo());
@@ -226,18 +212,19 @@ public class AddStudentFragment extends Fragment {
                 int counter = 0;
                 String studentName = etName.getText().toString().trim();
                 String studentRollNo = etRollNo.getText().toString();
-                Student newstudent;
-                if (!validate()) {
+                Student newStudent;
+                Log.d("here", "onClick: here " + studentName + " " + studentRollNo + validate());
+                if (validate()) {
 
-                    newstudent = new Student(studentName, studentRollNo);
-                    Log.d("update", "updateMode: new " + newstudent.getName() + " " + newstudent.getRollNo());
+                    newStudent = new Student(studentName, studentRollNo);
+                    Log.d("update", "updateMode: new " + newStudent.getName() + " " + newStudent.getRollNo());
                     for (Student ItrStudent : studentArrayList) {
 
                         if (counter == position) {
 
                             counter++;
                             continue;
-                        } else if (newstudent.getRollNo().equals(ItrStudent.getRollNo())) {
+                        } else if (newStudent.getRollNo().equals(ItrStudent.getRollNo())) {
                             etRollNo.setError(getString(R.string.error_roll_no));
                             counter = -1;
 
@@ -251,17 +238,13 @@ public class AddStudentFragment extends Fragment {
                         Log.d("here", "onClick;update");
                         etName.setEnabled(false);
                         etRollNo.setEnabled(false);
-                        openOptionsDialog(Constants.EDIT_STUDENT_INFO, newstudent, oldRollNo);
+                        openOptionsDialog(Constants.EDIT_STUDENT_INFO, newStudent, oldRollNo, position);
                         etName.setEnabled(true);
                         etRollNo.setEnabled(true);
-                        /*dbHelper.getWritableDatabase();
-                        dbHelper.updateStudent(oldRollNo,newstudent);
-                        Log.d("here", "onClick: in Update " + studentRollNo);*/
-                        //returnIntent.putExtra("updated", studentRollNo);
-                        //returnIntent.putExtra(Constants.EXTRA_POSITION, position);
-                        //setResult(Constants.EDIT_STUDENT_INFO, returnIntent);
 
                     }
+                } else {
+                    Log.d("here", "onClick: validate wrong");
                 }
             }
         });
@@ -269,32 +252,33 @@ public class AddStudentFragment extends Fragment {
 
     /**
      * for options of database interactions
-     * @param option type of operation
-     * @param student Student object
+     *
+     * @param option    type of operation
+     * @param student   Student object
      * @param oldRollNo oldRollNo of student
      */
-    private void openOptionsDialog(final int option, final Student student, final String oldRollNo) {
+    private void openOptionsDialog(final int option, final Student student, final String oldRollNo, final int position) {
         View mView = getLayoutInflater().inflate(R.layout.dialog_add_options, null);
         final AlertDialog dialog = new AlertDialog.Builder(mContext).setView(mView).create();
         initAlertDialogView(mView);
         btnAsync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                taskAsync(option, student, oldRollNo);
+                taskAsync(option, student, oldRollNo, position);
                 dialog.dismiss();
             }
         });
         btnService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                taskService(option, student, oldRollNo);
+                taskService(option, student, oldRollNo, position);
                 dialog.dismiss();
             }
         });
         btnIntentServ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                taskIntentService(option, student, oldRollNo);
+                taskIntentService(option, student, oldRollNo, position);
                 dialog.dismiss();
 
             }
@@ -305,24 +289,28 @@ public class AddStudentFragment extends Fragment {
 
     /**
      * to execute async operation
-     * @param option type of operation
-     * @param student Student object
+     *
+     * @param option    type of operation
+     * @param student   Student object
      * @param oldRollNo oldRollNo of student
      */
-    private void taskAsync(int option, Student student, String oldRollNo) {
+    private void taskAsync(int option, Student student, String oldRollNo, int position) {
 
+        BackgroundAsync taskAsync = new BackgroundAsync(mContext);
         taskAsync.execute(option, student, oldRollNo);
         mListener.onChangeTab();
-        //finish();
+        mListener.addStudent(student, oldRollNo, position);
+
     }
 
     /**
      * to execute service operation
-     * @param option type of operation
-     * @param student Student object
+     *
+     * @param option    type of operation
+     * @param student   Student object
      * @param oldRollNo oldRollNo of student
      */
-    private void taskService(int option, Student student, String oldRollNo) {
+    private void taskService(int option, Student student, String oldRollNo, int position) {
         Log.d("INSIDE", "Service " + option);
         Intent service = new Intent(mContext, BackgroundService.class);
         service.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
@@ -330,16 +318,18 @@ public class AddStudentFragment extends Fragment {
         service.putExtra(Constants.EXTRA_OLD_ROLL_NO, oldRollNo);
         mContext.startService(service);
         mListener.onChangeTab();
+        mListener.addStudent(student, oldRollNo, position);
         //finish();
     }
 
     /**
      * to execute intent service operation
-     * @param option type of operation
-     * @param student Student object
+     *
+     * @param option    type of operation
+     * @param student   Student object
      * @param oldRollNo oldRollNo of student
      */
-    private void taskIntentService(int option, Student student, String oldRollNo) {
+    private void taskIntentService(int option, Student student, String oldRollNo, int position) {
         Log.d("INSIDE", "Intent Service " + option);
         Intent intentService = new Intent(mContext, BackgroundIntentService.class);
         intentService.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
@@ -347,6 +337,7 @@ public class AddStudentFragment extends Fragment {
         intentService.putExtra(Constants.EXTRA_OLD_ROLL_NO, oldRollNo);
         mContext.startService(intentService);
         mListener.onChangeTab();
+        mListener.addStudent(student, oldRollNo, position);
         //finish();
 
     }
@@ -387,8 +378,6 @@ public class AddStudentFragment extends Fragment {
 
         return true;
     }
-
-
 
 
 }

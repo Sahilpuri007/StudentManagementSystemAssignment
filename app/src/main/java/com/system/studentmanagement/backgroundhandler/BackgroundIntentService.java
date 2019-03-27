@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.system.studentmanagement.dbmanager.DatabaseHelper;
+import com.system.studentmanagement.listener.OnFragmentInteractionListener;
 import com.system.studentmanagement.model.Student;
 import com.system.studentmanagement.util.Constants;
 
@@ -29,7 +30,6 @@ public class BackgroundIntentService extends IntentService {
         DatabaseHelper dbHelper=new DatabaseHelper(this);
         int option = intent.getIntExtra(Constants.EXTRA_OPTION,Constants.ERROR_CODE);
         Student student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
-
 
         switch (option)
         {

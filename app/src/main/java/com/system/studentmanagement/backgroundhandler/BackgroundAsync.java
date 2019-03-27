@@ -12,6 +12,7 @@ import javax.security.auth.callback.Callback;
 
 public class BackgroundAsync extends AsyncTask<Object,Void,Void> {
 
+
     private Context context;
 
     public BackgroundAsync(Context context) {
@@ -63,8 +64,9 @@ public class BackgroundAsync extends AsyncTask<Object,Void,Void> {
     }
 
 
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
 
-
-
-
+    }
 }

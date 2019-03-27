@@ -4,27 +4,25 @@ import android.os.Bundle;
 
 import com.system.studentmanagement.model.Student;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * interface OnFragmentInteractionListener
+ * to provide interactions between fragments
+ */
 public interface OnFragmentInteractionListener {
 
 
-        /**
-         * onChangeTab move the tabs from one tab to another
-         * If the Tab First is Selected in that case Tab 2 will be opened and vice-versa
-         */
-        void onChangeTab();
+    void onChangeTab();
 
+    ArrayList<Student> onRefreshStudentList();
 
-        boolean onStudentDelete(Student student);
+    void onEditData(Bundle bundle);
 
-        List<Student> onRefreshStudentList();
+    void onAddData(Bundle bundle);
 
-        void onEditData(Bundle bundle);
-
-        void onAddData(Bundle bundle);
-
-
+    void addStudent(Student student,String oldRollNo,int position);
 
 }
 

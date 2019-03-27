@@ -35,7 +35,7 @@ import java.util.List;
  * Activity which is used to Add,View and Edit Student Info
  */
 
-public class StudentActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+public class StudentActivity extends AppCompatActivity {
 
 
     private Bundle bundle;
@@ -59,6 +59,9 @@ public class StudentActivity extends AppCompatActivity implements OnFragmentInte
         studentFragment.viewStudent(student);
     }
 
+    /**
+     * method init to initialize views
+     */
     private void init() {
 
         bundle = getIntent().getExtras();
@@ -71,31 +74,4 @@ public class StudentActivity extends AppCompatActivity implements OnFragmentInte
 
     }
 
-    @Override
-    public void onChangeTab() {
-
-    }
-
-    @Override
-    public boolean onStudentDelete(Student student) {
-        return false;
-    }
-
-    @Override
-    public List<Student> onRefreshStudentList() {
-
-        DatabaseHelper databaseHelper = new DatabaseHelper(this);
-        List<Student> students = databaseHelper.getAllStudents();
-        return students;
-    }
-
-    @Override
-    public void onEditData(Bundle bundle) {
-
-    }
-
-    @Override
-    public void onAddData(Bundle bundle) {
-
-    }
 }

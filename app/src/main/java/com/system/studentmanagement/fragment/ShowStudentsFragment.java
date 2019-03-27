@@ -80,17 +80,20 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().build();
-        StrictMode.setThreadPolicy(policy);
         View view = inflater.inflate(R.layout.fragment_show_students, container, false);
 
         initComponents(view);
         buildRecyclerView();
         setAllListeners();
-
-        refreshStudentList();
         return view;
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        studentListAdapter.notifyDataSetChanged();
+        refreshStudentList();
     }
 
     public void refreshStudentList() {
@@ -106,8 +109,6 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         } else {
             rlEmptyView.setVisibility(View.GONE);
         }
-
-        studentListAdapter.notifyDataSetChanged();
 
     }
 
@@ -135,6 +136,29 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
 
         studentDialog(position);
 
+    }
+    /**
+     * method addStudentToList
+     * to add new Student to array list
+     * @param student student
+     */
+    public void addStudentToList(Student student) {
+        databaseHelper.getWritableDatabase();
+        studentArrayList.add(student);
+        studentListAdapter.notifyDataSetChanged();
+        rlEmptyView.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * method addUpdatedStudentToList
+     * to  add updated Student to array list
+     * @param student new Student
+     * @param position position
+     */
+    public void addUpdatedStudentToList(final Student student, final int position) {
+        studentArrayList.remove(position);
+        studentArrayList.add(position, student);
+        studentListAdapter.notifyDataSetChanged();
     }
 
 
@@ -305,8 +329,6 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
             public void onClick(DialogInterface dialog, int which) {
 
                 deleteHandler(studentArrayList.get(position));
-
-//              databaseHelper.deleteStudent(studentArrayList.get(position));
                 studentListAdapter.notifyDataSetChanged();
                 if (studentArrayList.size() == 0) {
                     rlEmptyView.setVisibility(View.VISIBLE);
@@ -324,12 +346,6 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         alertDialog.show();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("asasasasa", "paause");
-    }
-
     /**
      * to delete student(s) from database
      * three choices are given
@@ -337,10 +353,8 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
      * 2.Service
      * 3.Intent Service
      *
-     * @param student
+     * @param student student
      */
-
-
     private void deleteHandler(final Student student) {
         View mViewDialog = getLayoutInflater().inflate(R.layout.dialog_add_options, null);
         final AlertDialog dialog = new AlertDialog.Builder(mContext).setView(mViewDialog).create();
@@ -361,7 +375,6 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
                     studentArrayList.clear();
                     rlEmptyView.setVisibility(View.VISIBLE);
                 }
-                refreshStudentList();
                 studentListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
 
@@ -383,7 +396,6 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
                     studentArrayList.clear();
                     rlEmptyView.setVisibility(View.VISIBLE);
                 }
-                refreshStudentList();
                 studentListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
 
@@ -407,7 +419,6 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
                     rlEmptyView.setVisibility(View.VISIBLE);
 
                 }
-                refreshStudentList();
                 studentListAdapter.notifyDataSetChanged();
                 dialog.dismiss();
 
@@ -519,11 +530,6 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
                 public void onClick(DialogInterface dialog, int which) {
 
                     deleteHandler(null);
-
-                    /*studentArrayList.clear();
-                    databaseHelper.getWritableDatabase();
-                    databaseHelper.deleteAll();*/
-                    refreshStudentList();
                     studentListAdapter.notifyDataSetChanged();
 
                     alertDialog.cancel();
@@ -548,60 +554,6 @@ public class ShowStudentsFragment extends Fragment implements RecyclerTouchListe
         final Bundle bundle = new Bundle();
         bundle.putInt(Constants.EXTRA_OPTION, Constants.ADD_STUDENT_INFO);
         mListener.onAddData(bundle);
-    }
-
-    /**
-     * method onActivityResult
-     * To delete all items in Recycler View
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param intent
-     */
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-
-
-        Student student;
-        if (resultCode == RESULT_OK && requestCode == Constants.ADD_STUDENT_INFO) {
-            String id = intent.getStringExtra("id");
-            databaseHelper.getWritableDatabase();
-            Log.d("id", "" + id);
-            student = databaseHelper.getStudent(id);
-            addStudentToList(student);
-        }
-        if (resultCode == Constants.EDIT_STUDENT_INFO) {
-            String id = intent.getStringExtra("updated");
-            databaseHelper.getWritableDatabase();
-            Log.d("updated", "" + id);
-            student = databaseHelper.getStudent(id);
-            addUpdatedStudentToList(student, intent);
-
-
-        }
-    }
-
-    /**
-     * method addStudentToList
-     * to add new Student to array list
-     *
-     * @param student
-     */
-    private void addStudentToList(final Student student) {
-        studentArrayList.add(student);
-        studentListAdapter.notifyDataSetChanged();
-        rlEmptyView.setVisibility(View.INVISIBLE);
-    }
-
-    /*
-     * method addUpdatedStudentToList
-     * to  add updated Student to array list
-     */
-    private void addUpdatedStudentToList(final Student student, final Intent intent) {
-        int position = intent.getIntExtra(Constants.EXTRA_POSITION, -1);
-        studentArrayList.remove(position);
-        studentArrayList.add(position, student);
         studentListAdapter.notifyDataSetChanged();
     }
-
-
 }

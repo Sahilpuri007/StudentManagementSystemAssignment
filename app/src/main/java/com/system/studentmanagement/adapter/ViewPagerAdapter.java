@@ -9,12 +9,18 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * class ViewPagerAdapter to manage viewpager
+ */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
 
+    /**
+     * Constructor get FragmentManager
+     * @param manager
+     */
     public ViewPagerAdapter(FragmentManager manager) {
         super(manager);
     }
@@ -35,14 +41,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     }
 
 
+    /**
+     * method addFragment to add new fragment
+     * @param fragment new Fragment
+     * @param title fragment's title
+     */
     public void addFragment(Fragment fragment, String title) {
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
     }
 
-    public void replaceFragment(Fragment fragment,int position){
-        mFragmentList.remove(position);
-        mFragmentList.add(position,fragment);
-    }
 
 }

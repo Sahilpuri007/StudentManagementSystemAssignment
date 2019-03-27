@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.system.studentmanagement.dbmanager.DatabaseHelper;
+import com.system.studentmanagement.listener.OnFragmentInteractionListener;
 import com.system.studentmanagement.model.Student;
 import com.system.studentmanagement.util.Constants;
 
@@ -22,7 +23,6 @@ public class BackgroundService extends Service {
         DatabaseHelper dbHelper=new DatabaseHelper(this);
         int option = intent.getIntExtra(Constants.EXTRA_OPTION,Constants.ERROR_CODE);
         Student student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
-
 
         switch (option)
         {
