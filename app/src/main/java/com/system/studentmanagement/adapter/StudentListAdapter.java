@@ -28,7 +28,7 @@ public class StudentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
      * Constructor for StudentListAdapter
      * @param ArrayList<Student> studentArrayList
      */
-    public StudentListAdapter(final ArrayList<Student> studentArrayList,final RecyclerTouchListener listener) {
+    public StudentListAdapter(final ArrayList<Student> studentArrayList, final RecyclerTouchListener listener) {
         this.studentArrayList = studentArrayList;
         this.mListener = listener;
     }

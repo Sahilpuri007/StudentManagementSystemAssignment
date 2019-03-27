@@ -71,7 +71,6 @@ public class StudentActivity extends AppCompatActivity {
      */
     private void manageIntent() {
         Intent intent = getIntent();
-        //studentArrayList = intent.getParcelableArrayListExtra(Constants.EXTRA_ARRAY_LIST);
         final Student student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
         if (intent.getIntExtra(Constants.EXTRA_OPTION, Constants.ERROR_CODE) == Constants.VIEW_STUDENT_INFO) {
             viewStudent(student);
@@ -79,7 +78,6 @@ public class StudentActivity extends AppCompatActivity {
             int position = intent.getIntExtra(Constants.EXTRA_POSITION, -1);
             updateMode(student, position, studentArrayList);
         } else {
-            // Log.d("here ",studentArrayList.toString());
             addMode();
         }
 
@@ -140,9 +138,6 @@ public class StudentActivity extends AppCompatActivity {
                         openOptionsDialog(Constants.ADD_STUDENT_INFO, student, null);
                         etName.setEnabled(true);
                         etRollNo.setEnabled(true);
-                        //returnIntent.putExtra(Constants.EXTRA_STUDENT_OBJECT, student);
-                        /*dbHelper.getWritableDatabase();
-                        dbHelper.addStudent(student);*/
                         returnIntent.putExtra("id", studentRollNo);
                         setResult(RESULT_OK, returnIntent);
 
@@ -210,9 +205,6 @@ public class StudentActivity extends AppCompatActivity {
                         openOptionsDialog(Constants.EDIT_STUDENT_INFO, newstudent, oldRollNo);
                         etName.setEnabled(true);
                         etRollNo.setEnabled(true);
-                        /*dbHelper.getWritableDatabase();
-                        dbHelper.updateStudent(oldRollNo,newstudent);
-                        Log.d("here", "onClick: in Update " + studentRollNo);*/
                         returnIntent.putExtra("updated", studentRollNo);
                         returnIntent.putExtra(Constants.EXTRA_POSITION, position);
                         setResult(Constants.EDIT_STUDENT_INFO, returnIntent);
@@ -225,8 +217,9 @@ public class StudentActivity extends AppCompatActivity {
 
     /**
      * for options of database interactions
-     * @param option type of operation
-     * @param student Student object
+     *
+     * @param option    type of operation
+     * @param student   Student object
      * @param oldRollNo oldRollNo of student
      */
     private void openOptionsDialog(final int option, final Student student, final String oldRollNo) {
@@ -261,8 +254,9 @@ public class StudentActivity extends AppCompatActivity {
 
     /**
      * to execute async operation
-     * @param option type of operation
-     * @param student Student object
+     *
+     * @param option    type of operation
+     * @param student   Student object
      * @param oldRollNo oldRollNo of student
      */
     private void taskAsync(int option, Student student, String oldRollNo) {
@@ -273,8 +267,9 @@ public class StudentActivity extends AppCompatActivity {
 
     /**
      * to execute service operation
-     * @param option type of operation
-     * @param student Student object
+     *
+     * @param option    type of operation
+     * @param student   Student object
      * @param oldRollNo oldRollNo of student
      */
     private void taskService(int option, Student student, String oldRollNo) {
@@ -289,8 +284,9 @@ public class StudentActivity extends AppCompatActivity {
 
     /**
      * to execute intent service operation
-     * @param option type of operation
-     * @param student Student object
+     *
+     * @param option    type of operation
+     * @param student   Student object
      * @param oldRollNo oldRollNo of student
      */
     private void taskIntentService(int option, Student student, String oldRollNo) {

@@ -2,15 +2,16 @@ package com.system.studentmanagement.backgroundhandler;
 
 import android.app.Service;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.system.studentmanagement.dbmanager.DatabaseHelper;
 import com.system.studentmanagement.model.Student;
 import com.system.studentmanagement.util.Constants;
 
+/**
+ * Class to handle operations through Service
+ */
 public class BackgroundService extends Service {
 
     public BackgroundService() {
@@ -19,40 +20,36 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        DatabaseHelper dbHelper=new DatabaseHelper(this);
-        int option = intent.getIntExtra(Constants.EXTRA_OPTION,Constants.ERROR_CODE);
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        int option = intent.getIntExtra(Constants.EXTRA_OPTION, Constants.ERROR_CODE);
         Student student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
 
 
-        switch (option)
-        {
+        switch (option) {
             case Constants.ADD_STUDENT_INFO:
-                Log.d( "Clicked btnService","add");
-             //   Log.d("Checking", "addStudent: "+student);
+                Log.d("Clicked btnService", "add");
+                //   Log.d("Checking", "addStudent: "+student);
                 dbHelper.getWritableDatabase();
                 dbHelper.addStudent(student);
                 break;
             case Constants.EDIT_STUDENT_INFO:
                 String oldRollNo = intent.getStringExtra(Constants.EXTRA_OLD_ROLL_NO);
-                Log.d( "Clicked btnService","edit");
+                Log.d("Clicked btnService", "edit");
                 //Log.d("Checking", "addStudent: "+student + " "+oldRollNo);
                 dbHelper.getWritableDatabase();
-                dbHelper.updateStudent(oldRollNo,student);
+                dbHelper.updateStudent(oldRollNo, student);
                 break;
 
             case Constants.DELETE_STUDENT_INFO:
 
-                if(student!=null){
+                if (student != null) {
                     dbHelper.getWritableDatabase();
                     dbHelper.deleteStudent(student);
 
-                }
-                else
-                {
+                } else {
                     dbHelper.getWritableDatabase();
                     dbHelper.deleteAll();
                 }
-
 
 
         }

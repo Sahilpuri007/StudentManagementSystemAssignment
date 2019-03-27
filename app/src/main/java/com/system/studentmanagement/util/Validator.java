@@ -7,7 +7,8 @@ public class Validator {
 
 
     private static final String NAME_REGEX = "^[\\p{L} .'-]+$";
-    private final static String ID_REGEX="^[1-9][0-9]*$";
+    private final static String ID_REGEX = "^[1-9][0-9]*$";
+
     /*
      * Method isEmpty - to check if input is null
      * @param EditText editText - input from fields

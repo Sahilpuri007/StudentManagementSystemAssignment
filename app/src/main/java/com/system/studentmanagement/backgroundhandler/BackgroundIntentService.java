@@ -9,7 +9,9 @@ import com.system.studentmanagement.model.Student;
 import com.system.studentmanagement.util.Constants;
 
 
-
+/**
+ * Class to handle operations through IntentService
+ */
 public class BackgroundIntentService extends IntentService {
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -20,41 +22,36 @@ public class BackgroundIntentService extends IntentService {
         super(name);
     }
 
-    public BackgroundIntentService(){
+    public BackgroundIntentService() {
         super(null);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        DatabaseHelper dbHelper=new DatabaseHelper(this);
-        int option = intent.getIntExtra(Constants.EXTRA_OPTION,Constants.ERROR_CODE);
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        int option = intent.getIntExtra(Constants.EXTRA_OPTION, Constants.ERROR_CODE);
         Student student = intent.getParcelableExtra(Constants.EXTRA_STUDENT_OBJECT);
 
 
-        switch (option)
-        {
+        switch (option) {
             case Constants.ADD_STUDENT_INFO:
-                Log.d( "Clicked btnService","add");
-               // Log.d("Checking", "addStudent: "+student);
+                Log.d("Clicked btnService", "add");
                 dbHelper.getWritableDatabase();
                 dbHelper.addStudent(student);
                 break;
             case Constants.EDIT_STUDENT_INFO:
                 String oldRollNo = intent.getStringExtra(Constants.EXTRA_OLD_ROLL_NO);
-                Log.d( "Clicked btnService","edit");
-              //  Log.d("Checking", "addStudent: "+student + " "+oldRollNo);
+                Log.d("Clicked btnService", "edit");
                 dbHelper.getWritableDatabase();
-                dbHelper.updateStudent(oldRollNo,student);
+                dbHelper.updateStudent(oldRollNo, student);
                 break;
             case Constants.DELETE_STUDENT_INFO:
 
-                if(student!=null){
+                if (student != null) {
                     dbHelper.getWritableDatabase();
                     dbHelper.deleteStudent(student);
 
-                }
-                else
-                {
+                } else {
                     dbHelper.getWritableDatabase();
                     dbHelper.deleteAll();
                 }

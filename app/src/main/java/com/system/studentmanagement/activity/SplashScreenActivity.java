@@ -1,9 +1,9 @@
 package com.system.studentmanagement.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.system.studentmanagement.R;
 import com.system.studentmanagement.util.Constants;
@@ -14,7 +14,6 @@ import com.system.studentmanagement.util.Constants;
  * The first screen which shows the logo and name of the app
  */
 public class SplashScreenActivity extends AppCompatActivity {
-
 
 
     @Override

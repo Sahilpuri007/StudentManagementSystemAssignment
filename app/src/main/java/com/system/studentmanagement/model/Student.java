@@ -19,12 +19,10 @@ public class Student implements Parcelable {
     private String rollNo;
 
 
-
-    public Student()
-    {
+    public Student() {
     }
 
-    public Student(final String studentName,final  String studentRollNo) {
+    public Student(final String studentName, final String studentRollNo) {
         this.name = studentName;
         this.rollNo = studentRollNo;
     }

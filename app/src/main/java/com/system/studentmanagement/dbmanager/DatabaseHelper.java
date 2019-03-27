@@ -116,11 +116,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return student;
 
     }
+
     /**
      * Update Student in Database
      *
      * @param oldRollNo of Student
-     * @param  student new Student object
+     * @param student   new Student object
      */
     public void updateStudent(String oldRollNo, Student student) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -130,10 +131,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(Student.TABLE_NAME, values, Student.COLUMN_ROLL_NUMBER + "=?", new String[]{oldRollNo});
         db.close();
     }
+
     /**
      * Delete Student in Database
      *
-     * @param  student  Student object
+     * @param student Student object
      */
     public void deleteStudent(Student student) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -142,6 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.close();
     }
+
     /**
      * Delete all Students in Database
      */

@@ -6,6 +6,6 @@ package com.system.studentmanagement.touchlistener;
  */
 public interface RecyclerTouchListener {
 
-        void onItemClick(final int position);
+    void onItemClick(final int position);
 }
 
