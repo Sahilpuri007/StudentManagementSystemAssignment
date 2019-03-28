@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -53,10 +54,10 @@ public class BackgroundService extends Service {
                     dbHelper.deleteAll();
                 }
 
-
-
         }
-        stopSelf();
+        intent.setAction("WORKING");
+        String echoMessage = "Broadcast Reciever";
+        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent.putExtra("message",echoMessage));
         return START_NOT_STICKY;
     }
 

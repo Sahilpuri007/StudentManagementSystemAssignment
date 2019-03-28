@@ -35,7 +35,7 @@ import java.util.List;
  * Activity which is used to Add,View and Edit Student Info
  */
 
-public class StudentActivity extends AppCompatActivity {
+public class StudentActivity extends AppCompatActivity implements  OnFragmentInteractionListener{
 
 
     private Bundle bundle;
@@ -74,4 +74,28 @@ public class StudentActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onChangeTab() {
+
+    }
+
+    @Override
+    public ArrayList<Student> onRefreshStudentList() {
+        return null;
+    }
+
+    @Override
+    public void onEditData(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onAddData(Bundle bundle) {
+
+    }
+
+    @Override
+    public void addStudent(Student student, String oldRollNo, int position) {
+
+    }
 }

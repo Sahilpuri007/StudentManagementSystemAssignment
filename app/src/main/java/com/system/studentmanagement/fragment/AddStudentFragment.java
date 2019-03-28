@@ -1,11 +1,15 @@
 package com.system.studentmanagement.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.system.studentmanagement.R;
 import com.system.studentmanagement.backgroundhandler.BackgroundAsync;
@@ -33,6 +38,7 @@ public class AddStudentFragment extends Fragment {
     private Button btnAddStudent, btnAsync, btnService, btnIntentServ;
     private ArrayList<Student> studentArrayList = new ArrayList<>();
     private Context mContext;
+    private DataReceiver dataReceiver = new DataReceiver();
 
 
     public AddStudentFragment() {
@@ -49,6 +55,19 @@ public class AddStudentFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter("WORKING");
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(dataReceiver,intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(dataReceiver);
+    }
 
     @Nullable
     @Override
@@ -377,6 +396,15 @@ public class AddStudentFragment extends Fragment {
         }
 
         return true;
+    }
+
+    public class DataReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context,"Broadcast Reciver",Toast.LENGTH_SHORT).show();
+
+        }
     }
 
 
