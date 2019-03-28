@@ -480,14 +480,14 @@ public class ShowStudentsActivity extends AppCompatActivity implements RecyclerT
 
         Student student;
         if (resultCode == RESULT_OK && requestCode == Constants.ADD_STUDENT_INFO) {
-            String id = intent.getStringExtra("id");
+            String id = intent.getStringExtra(Constants.EXTRA_ID);
             databaseHelper.getWritableDatabase();
             Log.d("id", "" + id);
             student = databaseHelper.getStudent(id);
             addStudentToList(student);
         }
         if (resultCode == Constants.EDIT_STUDENT_INFO) {
-            String id = intent.getStringExtra("updated");
+            String id = intent.getStringExtra(Constants.EXTRA_UPDATED_ID);
             databaseHelper.getWritableDatabase();
             Log.d("updated", "" + id);
             student = databaseHelper.getStudent(id);

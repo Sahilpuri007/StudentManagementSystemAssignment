@@ -57,9 +57,9 @@ public class BackgroundIntentService extends IntentService {
                     dbHelper.deleteAll();
                 }
         }
-        intent.setAction("WORKING");
-        String echoMessage = "Broadcast Reciever";
-        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent.putExtra("message",echoMessage));
+        intent.setAction(Constants.BROADCAST_ACTION);
+        String echoMessage = Constants.BROADCAST_MESSAGE;
+        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent.putExtra(Constants.EXTRA_MESSAGE,echoMessage));
 
 
     }

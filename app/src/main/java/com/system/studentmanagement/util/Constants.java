@@ -19,5 +19,9 @@ public class Constants {
     public static final String EXTRA_OPTION = "option";
     public static final String EXTRA_POSITION = "position";
     public static final String EXTRA_OLD_ROLL_NO = "oldRollNo";
-
+    public static final String EXTRA_ID= "id";
+    public static final String EXTRA_UPDATED_ID="updated";
+    public static final String BROADCAST_ACTION="WORKING";
+    public static final String BROADCAST_MESSAGE="Broadcast Reciver";
+    public static final String EXTRA_MESSAGE="message";
 }

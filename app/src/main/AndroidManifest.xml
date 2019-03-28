@@ -23,7 +23,7 @@
         <service android:name=".backgroundhandler.BackgroundService" />
         <service android:name=".backgroundhandler.BackgroundIntentService" />
 
-        <receiver android:name=".fragment.AddStudentFragment$DataReceiver"/>
+        <receiver android:name=".activity.StudentActivity$DataReceiver"/>
     </application>
 
 </manifest>

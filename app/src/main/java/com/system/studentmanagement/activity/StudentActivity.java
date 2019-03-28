@@ -57,7 +57,7 @@ public class StudentActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter("WORKING");
+        IntentFilter intentFilter = new IntentFilter(Constants.BROADCAST_ACTION);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(dataReceiver,intentFilter);
 
     }
@@ -157,7 +157,7 @@ public class StudentActivity extends AppCompatActivity {
                         openOptionsDialog(Constants.ADD_STUDENT_INFO, student, null);
                         etName.setEnabled(true);
                         etRollNo.setEnabled(true);
-                        returnIntent.putExtra("id", studentRollNo);
+                        returnIntent.putExtra(Constants.EXTRA_ID, studentRollNo);
                         setResult(RESULT_OK, returnIntent);
 
                     }
@@ -224,7 +224,7 @@ public class StudentActivity extends AppCompatActivity {
                         openOptionsDialog(Constants.EDIT_STUDENT_INFO, newstudent, oldRollNo);
                         etName.setEnabled(true);
                         etRollNo.setEnabled(true);
-                        returnIntent.putExtra("updated", studentRollNo);
+                        returnIntent.putExtra(Constants.EXTRA_UPDATED_ID, studentRollNo);
                         returnIntent.putExtra(Constants.EXTRA_POSITION, position);
                         setResult(Constants.EDIT_STUDENT_INFO, returnIntent);
 
@@ -359,7 +359,7 @@ public class StudentActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context,"Broadcast Reciver",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,Constants.BROADCAST_MESSAGE,Toast.LENGTH_SHORT).show();
 
         }
     }
