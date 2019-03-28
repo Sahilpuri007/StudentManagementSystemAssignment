@@ -110,7 +110,7 @@ public class ShowStudentsActivity extends AppCompatActivity implements OnFragmen
 
 
     @SuppressLint("ResourceType")
-    /**
+    /*
      * method initViews to initialize views
      */
     private void initViews() {

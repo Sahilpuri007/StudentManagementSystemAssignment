@@ -59,7 +59,7 @@ public class AddStudentFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        IntentFilter intentFilter = new IntentFilter("WORKING");
+        IntentFilter intentFilter = new IntentFilter(Constants.BROADCAST_ACTION);
         LocalBroadcastManager.getInstance(mContext).registerReceiver(dataReceiver,intentFilter);
     }
 
@@ -402,7 +402,7 @@ public class AddStudentFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context,"Broadcast Reciver",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,Constants.BROADCAST_MESSAGE,Toast.LENGTH_SHORT).show();
 
         }
     }
