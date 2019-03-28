@@ -22,6 +22,8 @@
 
         <service android:name=".backgroundhandler.BackgroundService" />
         <service android:name=".backgroundhandler.BackgroundIntentService" />
+
+        <receiver android:name=".fragment.AddStudentFragment$DataReceiver"/>
     </application>
 
 </manifest>

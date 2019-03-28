@@ -2,6 +2,7 @@ package com.system.studentmanagement.backgroundhandler;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.system.studentmanagement.dbmanager.DatabaseHelper;
@@ -56,6 +57,9 @@ public class BackgroundIntentService extends IntentService {
                     dbHelper.deleteAll();
                 }
         }
+        intent.setAction("WORKING");
+        String echoMessage = "Broadcast Reciever";
+        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent.putExtra("message",echoMessage));
 
 
     }
